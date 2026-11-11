@@ -1,0 +1,17 @@
+{
+  "checkedDate": "2026-11-11",
+  "ascendCommit": "30572def8290cf08b300a2326b09f9c4abe8f30f",
+  "vllmCommit": "24420b7a341af37a9bc3186e6fc6062512e0aa58",
+  "nativeTPSizes": [2, 4, 8],
+  "dpAndFineTPSizes": [[4, 2], [4, 4], [8, 2], [8, 4], [8, 8]],
+  "existingTestsPassed": 46,
+  "newModuleTestsPassed": 30,
+  "newConfigRejectionTestsPassed": 6,
+  "totalPassed": 82,
+  "pytestReportedSeconds": 2.58,
+  "execution": "CPU against actual A5 Python classes; topology and collectives mocked",
+  "newTestWeights": "Synthetic FP32 weights, vocab=64 and hidden=4; no production checkpoint loaded",
+  "covers": ["fineTP plan", "real weight loader", "embedding lookup and mask", "LM head GEMM", "A2A logits layout", "unequal owner rows", "idle owner", "O/MLP native TP rejection"],
+  "doesNotCover": ["NPU kernels", "HCCL", "ACL graph", "full Kimi model inference", "DCP integration"],
+  "inferenceSourceChanged": false
+}

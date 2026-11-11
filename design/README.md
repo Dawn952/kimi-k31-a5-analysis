@@ -63,7 +63,7 @@ G/O 权重一样大不表示分片控制必须绑定。G 是 column projection `
 
 `1` 为关闭；兼容旧配置 `0` 为关闭别名，进入计划时归一为1。负数、不能整除 DP/相关维度的 size 在启动时拒绝。已开启字段不得被静默改回1并当作验收成功。
 
-主验收部署条件：Kimi K3.1 的当前混合量化格式；DP32/EP32，TP=PCP=DCP=PP=1，PD `kv_consumer`，decode-shaped step，graph 及其捕获容量覆盖最大 step。O/MLP 继续要求 `recompute_scheduler_enable=true`；第一版 QKV/G 与同一 decode/graph 契约对齐，避免新增未验证的 eager 路径。仅 embedding/LM head 时保留其原有更宽支持范围。
+主验收部署条件：Kimi K3.1 的当前混合量化格式；DP32/EP32，TP=PCP=DCP=PP=1，PD `kv_consumer`，decode-shaped step，graph 及其捕获容量覆盖最大 step。O/MLP 继续要求 `recompute_scheduler_enable=true`；第一版 QKV/G 与同一 decode/graph 契约对齐，避免新增未验证的 eager 路径。**仅 embedding/LM head 时，当前实现支持全局TP>1**：其词表分片由DP轴fineTP替换原native TP，而非两轴相乘。本次实际类CPU检查82项通过；采样互斥条件、显存含义及O/MLP/QKV/G为何限制TP1见[TP兼容性核查](tp-compatibility.md)。这不代表已做真实HCCL或完整模型设备验收。
 
 新 Kimi 投影路径不支持的 TP/PCP/DCP/PP、模型、量化格式应启动时报清楚原因；**全部关闭时不得加这些限制**，原 TP8/DCP、prefill、eager 仍由原实现决定。
 

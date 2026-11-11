@@ -6,6 +6,8 @@
 
 **新增：[六类细粒度 TP 软件设计](design/README.md)**。明确独立 G 开关、KDA 重构、DP32TP1 全开/部分关/全关路径、权重加载、graph/idle rank 与64组合验收。已复制 [PR20574 固定版本公共源码](references/pr20574/README.md)；当前是设计及参考代码，尚未接入推理服务。
 
+**补充：[全局 TP>1 兼容性核查](design/tp-compatibility.md)**。当前 embedding/LM head 已有支持路径，真实类CPU检查82项通过；同时逐项解释O的头布局冲突、dense的SP归约问题，以及QKV/G的实现范围。词表fineTP是替换native TP分片，不能按两个size相乘估显存。
+
 ## Gating G 是否与 O 一样大
 
 A5 实际量化 checkpoint header 确认：attention 输出 G 与 O **均为 BF16，每层均为168 MiB**。`12288 = 96 heads × 128`。维度顺序相反，数值独立、不共享权重。
