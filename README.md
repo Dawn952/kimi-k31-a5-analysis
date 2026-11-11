@@ -4,6 +4,8 @@
 
 **交互网页：[打开 A5 分析](https://dawn952.github.io/kimi-k31-a5-analysis/)**（公开访问，无需登录）。仓库内图文可直接阅读；`docs/index.html` 是可下载离线打开的单文件交互页，无运行依赖。
 
+**新增：[六类细粒度 TP 软件设计](design/README.md)**。明确独立 G 开关、KDA 重构、DP32TP1 全开/部分关/全关路径、权重加载、graph/idle rank 与64组合验收。已复制 [PR20574 固定版本公共源码](references/pr20574/README.md)；当前是设计及参考代码，尚未接入推理服务。
+
 ## Gating G 是否与 O 一样大
 
 A5 实际量化 checkpoint header 确认：attention 输出 G 与 O **均为 BF16，每层均为168 MiB**。`12288 = 96 heads × 128`。维度顺序相反，数值独立、不共享权重。

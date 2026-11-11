@@ -1,0 +1,24 @@
+{
+  "upstream": "https://github.com/vllm-project/vllm-ascend/pull/20574",
+  "head": "66f79fede7980c1e1192796ef0af648fe9a13106",
+  "base": "dcedb53a34f3850dfafdbf01263cfcc8fb82a932",
+  "retrieved": "2026-11-11",
+  "license": "Apache-2.0",
+  "status": "unmodified public upstream reference; not integrated runtime code",
+  "files": [
+    "docs/source/user_guide/configuration/additional_config.md",
+    "docs/source/user_guide/feature_guide/Fine_grained_TP.md",
+    "release_notes/fragments/20574.yaml",
+    "tests/ut/distributed/test_parallel_state.py",
+    "tests/ut/models/test_glm5next_kda_dispatch.py",
+    "tests/ut/models/test_glm5next_kda_input_projection_tp.py",
+    "tests/ut/models/test_glm5next_kda_pcp.py",
+    "tests/ut/test_ascend_config.py",
+    "tests/ut/test_utils.py",
+    "vllm_ascend/ascend_config.py",
+    "vllm_ascend/distributed/parallel_state.py",
+    "vllm_ascend/models/glm5next/kda.py",
+    "vllm_ascend/models/glm5next/kda_input_projection_tp.py",
+    "vllm_ascend/utils.py"
+  ]
+}
