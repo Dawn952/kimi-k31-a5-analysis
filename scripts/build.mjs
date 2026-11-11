@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const read=name=>fs.readFileSync(path.join(root,'src',name),'utf8');
+const css=['style.css','localtp.css'].map(read).join('\n');
+const js=['dcp-overlap.js','diagram-layout.js','localtp-model.js','shell.js','localtp-view.js'].map(read).join('\n;\n').replaceAll('</script','<\\/script');
+const html=`<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Kimi K3.1 A5 纯DP/localTP：显存权重、计算通信依赖、Cube/Vector/Communication 多流与DCP profiling对照。"><title>Kimi K3.1 · A5 localTP 分析</title>
+<style>${css}
+.public-wrap{max-width:1900px;margin:auto;padding:22px}body[data-page=localtp] main{padding:0;max-width:none}.public-nav{display:flex;align-items:center;gap:22px;flex-wrap:wrap;max-width:1856px;margin:0 auto 22px;padding-bottom:14px;border-bottom:1px solid #304957;font-size:12px}.public-nav b{margin-right:auto;color:#bddfe3}.public-evidence{margin:24px 0}.public-evidence p{font-size:12px;line-height:1.9;color:#a9c0cd}.public-evidence code{overflow-wrap:anywhere}@media(max-width:700px){.public-wrap{padding:14px}.public-nav{gap:12px}}
+</style></head><body data-page="localtp"><div class="public-wrap"><nav class="public-nav"><b>Kimi K3.1 / A5 · 2026-11-11</b><a href="https://github.com/Dawn952/kimi-k31-a5-analysis">GitHub 图文与源码</a><a href="#source-evidence">来源 / G与O核对</a></nav><main id="main"><div id="view"></div></main>
+<section id="source-evidence" class="panel public-evidence"><h2>Gating G 与 O 权重核对</h2><p>本表为 attention 输出 <code>g_proj.weight</code>。A5 实际量化 checkpoint header 中 G 与 O 都是 BF16，每层各 88,080,384 参数、176,160,768 bytes = 168 MiB。维度顺序相反，权重数值独立。93层总量各15.2578125 GiB。</p><table class="data-table"><thead><tr><th>矩阵</th><th>完整 shape [out,in]</th><th>localTP8 shape</th><th>完整 / 每卡</th></tr></thead><tbody><tr><td>G</td><td>[12288,7168]</td><td>[1536,7168]</td><td>168 / 21 MiB</td></tr><tr><td>O</td><td>[7168,12288]</td><td>[7168,1536]</td><td>168 / 21 MiB</td></tr></tbody></table>
+<h2 style="margin-top:24px">来源与验收边界</h2><p>A5 分析源码版本 <code>30572def8290cf08b300a2326b09f9c4abe8f30f</code>，上游 vLLM <code>24420b7a341af37a9bc3186e6fc6062512e0aa58</code>。模块包括 <code>ops/kimi_kda.py</code>、<code>ops/kda.py</code>、<code>attention/sfa_v1.py</code>、<code>ops/vocab_parallel_embedding.py</code>。这里公开分析模型、图示和精简统计；运行环境源码和原始权重/trace 不在本仓库内。</p><p>DCP 样本采集日期2026-11-05，metadata确认TP8/DCP8/EP32；采集commit未确认。精简的真实kernel事件及区间统计公开在本仓库 <code>src/dcp-overlap.js</code>。通信envelope包含控制与等待，交集不等于端到端省时；不能据此拟合新拓扑带宽。图中拟多流/分块方案尚无实现后的NPU性能验收。</p><p><a href="https://github.com/vllm-project/vllm-ascend/pull/20574/">GLM localTP参考PR</a> · <a href="https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0218.html">CANN kernel类型定义</a></p></section></div><script>${js}\nrenderLocalTP();</script></body></html>`;
+fs.writeFileSync(path.join(root,'docs/index.html'),html);
+console.log('Built self-contained docs/index.html: '+Buffer.byteLength(html)+' bytes');

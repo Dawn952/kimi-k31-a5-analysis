@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-11",
+  "source": "A5 active quantized checkpoint tensor-header aggregation",
+  "weights": [
+    {
+      "name": "language_model.model.layers.*.self_attn.g_proj.weight",
+      "sample": "language_model.model.layers.2.self_attn.g_proj.weight",
+      "dtype": "BF16",
+      "shape": [
+        12288,
+        7168
+      ],
+      "layers": 93,
+      "totalBytes": 16382951424,
+      "bytesPerLayer": 176160768
+    },
+    {
+      "name": "language_model.model.layers.*.self_attn.o_proj.weight",
+      "sample": "language_model.model.layers.3.self_attn.o_proj.weight",
+      "dtype": "BF16",
+      "shape": [
+        7168,
+        12288
+      ],
+      "layers": 93,
+      "totalBytes": 16382951424,
+      "bytesPerLayer": 176160768
+    }
+  ]
+}
