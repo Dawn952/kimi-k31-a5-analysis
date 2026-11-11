@@ -1,6 +1,15 @@
 # A5 六类细粒度 TP 软件设计
 
-本轮交付为**可实施的软件设计与上游公共源码快照**。尚未修改推理运行代码，也未完成新方案的 NPU 功能或性能验收。下文“必须”是实现及验收要求，不代表已在设备上通过。
+实现已提交上游 **[Draft PR #21624](https://github.com/vllm-project/vllm-ascend/pull/21624)**，目标为当前 `vllm-project/vllm-ascend:main`，基线 `c251a6a5ed5cc10f7ec6daa5b87d410d731bf6fd`。本页继续作为同一设计与验收入口；现有推理服务未切换到新代码。
+
+## 实现与验证状态
+
+- 六独立开关已接线；G 独立于 O，QKV/G 全关保留原 BFG，attention state 不随 projection group 切分。shared MLP 不改。
+- 同一 maintainer 完成四轮对抗审查，发现的问题已修复并复核。重点修正：采样期不依赖 current-config scope；NoPE PIECEWISE 的 O 保留裁剪前 graph 容量；runtime idle 与 active 在 DP dispatch 后一并拒绝非法 eager；空行 head reshape。
+- A5 匹配 vLLM 环境的相关单测 **950 passed / 2 skipped**；按文件要求隔离运行的 CPU 编译测试 **8 passed**。其中实际执行器验证全部64组合、32个模拟owner及27种不同QKV/G/O大小。
+- **两卡 NPU 验证通过**：64组合、真实 Kimi MXFP8 merged loader/post-load/apply、独立 G、全开 raw NPU graph capture/replay，以及实际 SFA 包装层/O/HCCL 的不等长与空闲 owner。该测试使用小权重和合成 attention/prolog，不是完整 Kimi 或真实 recurrent 内核精度验收。
+- **仍待设备验收**：完整 DP32 checkpoint、真实多步 state/logits、旧拓扑硬件回归、峰值 HBM、长稳和端到端性能。图中的窗口仍是依赖可行性，不能当成已实测的收益。
+- PR 保持 Draft、未 merge。`format.sh ci` 的 Python/Markdown等检查通过，完整本地命令受 actionlint Go 下载、Windows shell hook 和 shellcheck 环境限制，仍需 CI 验证。
 
 ## 设计裁决
 
@@ -15,10 +24,10 @@
 |---|---|---|
 | A5 当前 Ascend 源码 | `30572def8290cf08b300a2326b09f9c4abe8f30f` | 本设计调用链和运行适配依据 |
 | A5 当前上游 vLLM | `24420b7a341af37a9bc3186e6fc6062512e0aa58` | loader、模型与 runner 契约 |
-| 项目 K3.1 开发分支 | `kimik31_030 @ c211ce3a199b1456fce4152d0772085012605085` | 后续功能分支/PR 的集成目标，和 A5 不是同一个提交 |
+| 上游集成目标 | `main @ c251a6a5ed5cc10f7ec6daa5b87d410d731bf6fd` | PR21624 的基线；替代此前讨论的私仓 K3.1 分支 |
 | PR20574 | `66f79fede7980c1e1192796ef0af648fe9a13106` | 固定公开参考，不能用不断移动的 PR head 代替 |
 
-A5 当前分支是 main 与 PR20878 相关提交的合并基线。实际实施前须对上述两个项目基线做目标文件 diff；不能把 A5 的完整 merge 直接混进 K3.1 功能 PR。以下行号均指 A5 版本，可用于本地源码检索；运行源码未公开。
+A5 当前分支是 main 与 PR20878 相关提交的合并基线。实施已改在 upstream main 上完成，没有混入 A5 的完整 merge。下表是设计开始时的接线缺口；行号指 A5 分析版本，当前实现请以 PR21624 为准。
 
 | 现状 | 位置 | 必须补齐的内容 |
 |---|---|---|
@@ -39,7 +48,7 @@ A5 当前分支是 main 与 PR20878 相关提交的合并基线。实际实施�
 
 | 公共实现 | 移植方式 | Kimi 必须改变的地方 |
 |---|---|---|
-| `FinegrainedTPConfig.qkv_iproj_tensor_parallel_size` | 复用字段名、默认值、非负/DP 整除校验 | 在显式 Kimi 分支校验 KDA 头数；保留 GLM 支持，不删除模型限制让所有模型误入 |
+| `FinegrainedTPConfig.qkv_iproj_tensor_parallel_size` | 复用字段名、默认值、非负/DP 整除校验 | 在显式 Kimi 分支校验 KDA 头数；本次仅接入 Kimi；GLM 的模型适配保留为公共参考，不宣称已合入本 PR |
 | QKV DP 子组创建、getter、生命周期 | 在现有 PG 管理代码增量移植 | 再增加 G group；同组引用去重释放，collective 发起顺序统一 |
 | `should_skip_allreduce_across_dp_group` 的 QKV 强制同步条件 | 复用“投影通信需要统一 token 容量”的原则 | QKV 或 G 任一启用都不能跳过同步；O/MLP 同样纳入当前 Kimi 执行计划；dense draft 的 `disable_tp` 语义保留 |
 | `KDAInputProjectionTPLayout` 的 AG/A2A 与 head 重排 | 抽出不依赖 GLM layer 的布局方法，保留来源/版权 | 容量由 runner 给出，不能自己按本 rank 的 token 数选桶；支持 QKV/G 不同 group |
