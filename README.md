@@ -2,7 +2,7 @@
 
 本轮分析的公开入口：权重显存、计算通信依赖、Cube/Vector/Communication 多流，以及本地 DCP profiling 对照。
 
-交互网页发布后在此补充入口。仓库内图文可直接阅读；`docs/index.html` 是可下载离线打开的单文件交互页，无运行依赖。
+**交互网页：[打开 A5 分析](https://dawn952.github.io/kimi-k31-a5-analysis/)**（公开访问，无需登录）。仓库内图文可直接阅读；`docs/index.html` 是可下载离线打开的单文件交互页，无运行依赖。
 
 ## Gating G 是否与 O 一样大
 
