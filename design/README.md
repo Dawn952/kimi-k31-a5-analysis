@@ -243,3 +243,30 @@ KDA/DSA 共用纯布局/异步交换工具并复用通用 O op；core、metadata
 4. **验收收敛**：64组合UT/设备短跑、重点组合长稳、原TP/DCP回归；驻留/峰值与trace核对后再给性能结论。
 
 后续推理代码从项目功能分支经fork Open PR交付，不自行merge。分析资料继续在当前公开仓库增量维护并同步Pages；公开快照只取上游公共源码，不发布运行环境私有代码。
+
+
+## A3/A5、其他模型与 768-token 通信显存（2026-11-12）
+
+核查版本为 PR21624 的 `4d4c9541695733e1ca2409ca5af8af24cd98a19d`。
+
+- A3 校准 checkpoint 的 QKV 为 `W8A8_DYNAMIC` INT8，A5 为 `W8A8_MXFP8`；两者 beta/F/G 都是 BF16。新 mixed-layout 条件接受二者；A3 的 INT8 quant-overlap capability 与 A5 的 MX 路径分别沿用现有实现。**代码有两条路径，但只有 A5 两卡已做本次设备验证；A3 新切分尚未设备验收。**
+- 新 QKV/G、KDA/SFA 和 dense/head 流水仅接入 Kimi；其他模型不能误开新 QKV/G 配置。全部关闭保留原算子路径。不过共用 `should_skip_allreduce_across_dp_group` 对其他 MoE 开启既有 O/MLP fineTP 的场景，也会强制 DP 元数据同步；公共 group teardown、runner dispatch guard 同样有覆盖。其正确性有相关 UT，不能宣称其他模型设备性能完全不变。
+- 下列估算假设 DP32/EP32、TP1，各开启的细粒度 size 都为8。实际有六个配置字段；少开一个但其余 size 仍同为8，不改变 PG 数量。相同 size 复用一个 GroupCoordinator，每卡只属于一个 localTP8 子组，不按层数、开关数、stream 数相乘。
+- `utils.py` 为这些普通 PG 显式设置 `hccl_buffer_size=200`，pg_options 优先于环境变量。`max_num_batched_tokens=768` 不会自动扩大它。按 CCL_In/Out 各200 MiB估，**细粒度 CCL 预算约400 MiB/card（0.391 GiB）**，并非整进程通信显存的实测值。如果原来已有同size的 O/vocab PG，新增 QKV/G 不再增加这份 CCL；若原来没有该组，则新增一份。
+- EP/MC2/connector 既有通信域另算；MC2 特意不设置该 pg_options，仍可能使用 `HCCL_BUFFSIZE`。算法 scratch、收发 tensor、activation 和 graph pool 也不属于这400 MiB。
+
+假设实际通信容量 `C=768`、BF16 hidden、H=7168、P=12288、96头、V=163840，张量大小如下，均为单个完整 tensor，**不能相加当峰值或CCL预留**：
+
+| 张量 | MiB |
+|---|---:|
+| hidden AG 完整输出 `[8C,H]` | 84 |
+| QKV/beta A2A 单边 `[8C,(3P+96)/8]` | 54.140625 |
+| G 返回 / O 输入 A2A 单边 | 各18 |
+| O RS 完整输入 `[8C,H]` | 84 |
+| dense 两chunk之一的 hidden AG | 42 |
+| LM-head 两chunk之一的 logits（BF16） | 120 |
+| LM-head 两chunk之一的 logits（FP32 head输出时） | 240 |
+
+普通 collective 可分段，显式 tensor 大于CCL并不自动改变配置。这里只说明当前200配置与数据量，未据此宣称最优大小。单独设置max_num_batched_tokens不能完全确定capacity：embedding取max(potential_max_tokens,max_num_batched_tokens)，LM head还受max_num_seqs、decode_query_len及DP同步结果约束；旧capture上限若仍大于768，应按实际容量重算。
+
+依据：[pg_options优先级](https://www.hiascend.com/document/detail/en/Pytorch/2600/ptmoddevg/Frameworkfeatures/docs/en/framework_feature_guide_pytorch/setting_HCCL_communicator_parameter.md)、[CCL In/Out 与通信域复用](https://www.hiascend.com/developer/techArticles/20240903-1)、PR中的 `distributed/parallel_state.py`、`utils.py` 与 `ops/finegrained_tp.py`。此为源码/shape推算，尚未实测768全模型峰值。
