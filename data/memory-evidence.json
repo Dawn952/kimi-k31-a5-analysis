@@ -1,0 +1,5180 @@
+{
+  "date": "2026-11-12",
+  "sourceHead": "a0665bc1cb4efee5f46bdaf486720781b9ac1e69",
+  "upstreamHead": "24420b7a341af37a9bc3186e6fc6062512e0aa58",
+  "recoverHead": "58f28bc832263f6f5f11df84871b037b164a0895",
+  "configuration": {
+    "dp": 64,
+    "tp": 1,
+    "ep": 64,
+    "localtp": 16,
+    "max_num_seqs": 1,
+    "max_num_batched_tokens": 128,
+    "gpu_memory_utilization": 0.93,
+    "hccl_buffsize_mib": 256,
+    "localtp_pg_buffer_mib": 64,
+    "ep_pg_buffer_mib": 200,
+    "cudagraph_capture_sizes": [
+      4
+    ],
+    "dspark_tokens": 3,
+    "synthetic_acceptance_length": 2.7
+  },
+  "measured": {
+    "weights_main_plus_draft_gib_measured": 37.70064401626587,
+    "kv_pool_physical_gib": 17.4715576171875,
+    "kv_pool_budget_gib": 17.724802779965103,
+    "activation_peak_gib_measured": 0.20682096481323242,
+    "non_torch_increase_before_graph_gib": 1.3483963012695312,
+    "hccl_buffer_allocation_gib": 1.135772705078125,
+    "graph_capture_physical_free_memory_delta_gib": 0.43353271484375,
+    "torch_allocated_after_graph_gib": 55.42101573944092,
+    "torch_reserved_after_graph_gib": 56.072265625,
+    "torch_reserved_unused_after_graph_gib": 0.651249885559082
+  },
+  "framework": {
+    "requested_memory": 61182522163.200005,
+    "peak_activation_memory": 222072320,
+    "non_torch_memory": 1447829504,
+    "available_kv_cache_memory_bytes": 19031862067,
+    "npugraph_memory_bytes": 0,
+    "weights_bytes": 40480758272,
+    "returned_cache_budget_bytes": 19031862067,
+    "total_device_bytes": 65787658240,
+    "initial_free_bytes": 65278476288,
+    "torch_allocated_bytes": 40486151168,
+    "torch_reserved_bytes": 40808480768
+  },
+  "physicalSnapshot": {
+    "minGiB": 61.931640625,
+    "maxGiB": 62.2861328125,
+    "devices": 64,
+    "workload": "128K simulated KV, decode, not 1M prefill"
+  },
+  "pool": {
+    "blocks": 62,
+    "physicalBytes": 18759942144,
+    "logicalBlockTokens": 12288,
+    "groups": [
+      {
+        "layers": [
+          "language_model.model.layers.3.self_attn.attn",
+          "language_model.model.layers.3.self_attn.indexer.k_cache",
+          "language_model.model.layers.7.self_attn.attn",
+          "language_model.model.layers.7.self_attn.indexer.k_cache",
+          "language_model.model.layers.11.self_attn.attn",
+          "language_model.model.layers.11.self_attn.indexer.k_cache",
+          "language_model.model.layers.15.self_attn.attn",
+          "language_model.model.layers.15.self_attn.indexer.k_cache",
+          "language_model.model.layers.19.self_attn.attn",
+          "language_model.model.layers.19.self_attn.indexer.k_cache",
+          "language_model.model.layers.23.self_attn.attn",
+          "language_model.model.layers.23.self_attn.indexer.k_cache",
+          "language_model.model.layers.27.self_attn.attn",
+          "language_model.model.layers.27.self_attn.indexer.k_cache",
+          "language_model.model.layers.31.self_attn.attn",
+          "language_model.model.layers.31.self_attn.indexer.k_cache",
+          "language_model.model.layers.35.self_attn.attn",
+          "language_model.model.layers.35.self_attn.indexer.k_cache",
+          "language_model.model.layers.39.self_attn.attn",
+          "language_model.model.layers.39.self_attn.indexer.k_cache",
+          "language_model.model.layers.43.self_attn.attn",
+          "language_model.model.layers.43.self_attn.indexer.k_cache",
+          "language_model.model.layers.47.self_attn.attn",
+          "language_model.model.layers.47.self_attn.indexer.k_cache",
+          "language_model.model.layers.51.self_attn.attn",
+          "language_model.model.layers.51.self_attn.indexer.k_cache",
+          "language_model.model.layers.55.self_attn.attn",
+          "language_model.model.layers.55.self_attn.indexer.k_cache",
+          "language_model.model.layers.59.self_attn.attn",
+          "language_model.model.layers.59.self_attn.indexer.k_cache",
+          "language_model.model.layers.63.self_attn.attn",
+          "language_model.model.layers.63.self_attn.indexer.k_cache",
+          "language_model.model.layers.67.self_attn.attn",
+          "language_model.model.layers.67.self_attn.indexer.k_cache",
+          "language_model.model.layers.71.self_attn.attn",
+          "language_model.model.layers.71.self_attn.indexer.k_cache",
+          "language_model.model.layers.75.self_attn.attn",
+          "language_model.model.layers.75.self_attn.indexer.k_cache",
+          "language_model.model.layers.79.self_attn.attn",
+          "language_model.model.layers.79.self_attn.indexer.k_cache",
+          "language_model.model.layers.83.self_attn.attn",
+          "language_model.model.layers.83.self_attn.indexer.k_cache",
+          "language_model.model.layers.87.self_attn.attn",
+          "language_model.model.layers.87.self_attn.indexer.k_cache",
+          "language_model.model.layers.91.self_attn.attn",
+          "language_model.model.layers.91.self_attn.indexer.k_cache",
+          "language_model.model.layers.92.self_attn.attn",
+          "language_model.model.layers.92.self_attn.indexer.k_cache",
+          "model.layers.93.self_attn.attn",
+          "model.layers.94.self_attn.attn",
+          "model.layers.95.self_attn.attn",
+          "model.layers.96.self_attn.attn",
+          "model.layers.97.self_attn.attn"
+        ],
+        "specClass": "UniformTypeKVCacheSpecs",
+        "pageBytes": 302579712
+      },
+      {
+        "layers": [
+          "language_model.model.layers.0.self_attn",
+          "language_model.model.layers.4.self_attn",
+          "language_model.model.layers.8.self_attn",
+          "language_model.model.layers.12.self_attn",
+          "language_model.model.layers.16.self_attn",
+          "language_model.model.layers.20.self_attn",
+          "language_model.model.layers.24.self_attn",
+          "language_model.model.layers.28.self_attn",
+          "language_model.model.layers.32.self_attn",
+          "language_model.model.layers.36.self_attn",
+          "language_model.model.layers.40.self_attn",
+          "language_model.model.layers.44.self_attn",
+          "language_model.model.layers.48.self_attn",
+          "language_model.model.layers.52.self_attn",
+          "language_model.model.layers.56.self_attn",
+          "language_model.model.layers.60.self_attn",
+          "language_model.model.layers.64.self_attn",
+          "language_model.model.layers.68.self_attn",
+          "language_model.model.layers.72.self_attn",
+          "language_model.model.layers.76.self_attn",
+          "language_model.model.layers.80.self_attn",
+          "language_model.model.layers.84.self_attn",
+          "language_model.model.layers.88.self_attn"
+        ],
+        "specClass": "MambaSpec",
+        "pageBytes": 8060928
+      },
+      {
+        "layers": [
+          "language_model.model.layers.1.self_attn",
+          "language_model.model.layers.5.self_attn",
+          "language_model.model.layers.9.self_attn",
+          "language_model.model.layers.13.self_attn",
+          "language_model.model.layers.17.self_attn",
+          "language_model.model.layers.21.self_attn",
+          "language_model.model.layers.25.self_attn",
+          "language_model.model.layers.29.self_attn",
+          "language_model.model.layers.33.self_attn",
+          "language_model.model.layers.37.self_attn",
+          "language_model.model.layers.41.self_attn",
+          "language_model.model.layers.45.self_attn",
+          "language_model.model.layers.49.self_attn",
+          "language_model.model.layers.53.self_attn",
+          "language_model.model.layers.57.self_attn",
+          "language_model.model.layers.61.self_attn",
+          "language_model.model.layers.65.self_attn",
+          "language_model.model.layers.69.self_attn",
+          "language_model.model.layers.73.self_attn",
+          "language_model.model.layers.77.self_attn",
+          "language_model.model.layers.81.self_attn",
+          "language_model.model.layers.85.self_attn",
+          "language_model.model.layers.89.self_attn"
+        ],
+        "specClass": "MambaSpec",
+        "pageBytes": 8060928
+      },
+      {
+        "layers": [
+          "language_model.model.layers.2.self_attn",
+          "language_model.model.layers.6.self_attn",
+          "language_model.model.layers.10.self_attn",
+          "language_model.model.layers.14.self_attn",
+          "language_model.model.layers.18.self_attn",
+          "language_model.model.layers.22.self_attn",
+          "language_model.model.layers.26.self_attn",
+          "language_model.model.layers.30.self_attn",
+          "language_model.model.layers.34.self_attn",
+          "language_model.model.layers.38.self_attn",
+          "language_model.model.layers.42.self_attn",
+          "language_model.model.layers.46.self_attn",
+          "language_model.model.layers.50.self_attn",
+          "language_model.model.layers.54.self_attn",
+          "language_model.model.layers.58.self_attn",
+          "language_model.model.layers.62.self_attn",
+          "language_model.model.layers.66.self_attn",
+          "language_model.model.layers.70.self_attn",
+          "language_model.model.layers.74.self_attn",
+          "language_model.model.layers.78.self_attn",
+          "language_model.model.layers.82.self_attn",
+          "language_model.model.layers.86.self_attn",
+          "language_model.model.layers.90.self_attn"
+        ],
+        "specClass": "MambaSpec",
+        "pageBytes": 8060928
+      }
+    ]
+  },
+  "cacheSpecs": [
+    {
+      "name": "language_model.model.layers.3.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.3.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.7.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.7.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.11.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.11.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.15.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.15.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.19.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.19.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.23.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.23.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.27.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.27.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.31.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.31.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.35.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.35.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.39.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.39.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.43.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.43.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.47.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.47.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.51.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.51.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.55.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.55.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.59.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.59.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.63.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.63.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.67.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.67.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.71.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.71.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.75.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.75.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.79.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.79.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.83.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.83.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.87.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.87.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.91.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.91.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.92.self_attn.indexer.k_cache",
+      "class": "AscendSFAIndexerCacheSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 128,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "scale_dim": 1,
+        "scale_dtype": "torch.float16",
+        "cache_sparse_li_c8": true,
+        "cache_sparse_li_c4": false,
+        "sfa_dcp_replicated_indexer_size": 1,
+        "block_table_block_size": null
+      },
+      "pageBytes": 1597440
+    },
+    {
+      "name": "language_model.model.layers.92.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 656,
+        "dtype": "torch.int8",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "int8",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": true,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "model.layers.93.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": true,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 576,
+        "dtype": "torch.bfloat16",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "auto",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": false,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 14155776
+    },
+    {
+      "name": "model.layers.94.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": true,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 576,
+        "dtype": "torch.bfloat16",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "auto",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": false,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 14155776
+    },
+    {
+      "name": "model.layers.95.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": true,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 576,
+        "dtype": "torch.bfloat16",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "auto",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": false,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 14155776
+    },
+    {
+      "name": "model.layers.96.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": true,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 576,
+        "dtype": "torch.bfloat16",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "auto",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": false,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 14155776
+    },
+    {
+      "name": "model.layers.97.self_attn.attn",
+      "class": "AscendMLAAttentionSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": true,
+        "block_stride_alignment": null,
+        "is_draft": true,
+        "max_tp_shards": 1,
+        "num_kv_heads": 1,
+        "head_size": 576,
+        "dtype": "torch.bfloat16",
+        "head_size_v": 0,
+        "kv_quant_mode": 0,
+        "page_size_padded": null,
+        "num_head_slots": null,
+        "state_content_bytes": null,
+        "tokens_per_state": 1,
+        "sliding_window": null,
+        "attention_chunk_size": null,
+        "non_causal": false,
+        "cache_dtype_str": "auto",
+        "topk_buffer_width": null,
+        "alignment": null,
+        "model_version": null,
+        "cache_role": "sparse",
+        "is_index_group_leader": false,
+        "non_causal_multi_token_decode": false,
+        "num_heads": 1,
+        "scale_dim": 0,
+        "scale_dtype": "torch.int8",
+        "cache_sparse_sfa_c8": false,
+        "cache_sparse_sfa_turboquant": false,
+        "store_on_host": false,
+        "indexes_kv_by_block_stride": false,
+        "block_table_block_size": null
+      },
+      "pageBytes": 14155776
+    },
+    {
+      "name": "language_model.model.layers.0.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.1.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.2.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.4.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.5.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.6.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.8.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.9.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.10.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.12.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.13.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.14.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.16.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.17.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.18.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.20.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.21.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.22.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.24.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.25.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.26.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.28.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.29.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.30.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.32.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.33.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.34.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.36.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.37.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.38.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.40.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.41.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.42.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.44.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.45.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.46.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.48.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.49.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.50.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.52.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.53.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.54.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.56.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.57.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.58.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.60.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.61.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.62.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.64.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.65.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.66.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.68.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.69.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.70.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.72.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.73.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.74.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.76.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.77.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.78.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.80.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.81.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.82.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.84.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.85.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.86.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.88.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.89.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    },
+    {
+      "name": "language_model.model.layers.90.self_attn",
+      "class": "MambaSpec",
+      "spec": {
+        "block_size": 12288,
+        "dcp_sharded": false,
+        "block_stride_alignment": null,
+        "is_draft": false,
+        "shapes": [
+          [
+            6,
+            36864
+          ],
+          [
+            96,
+            128,
+            128
+          ]
+        ],
+        "dtypes": [
+          "torch.bfloat16",
+          "torch.float32"
+        ],
+        "page_size_padded": 8060928,
+        "mamba_type": "MambaAttentionBackendEnum.GDN_ATTN",
+        "mamba_cache_mode": "align",
+        "num_speculative_blocks": 3,
+        "num_prefill_checkpoint_blocks": 0,
+        "prefill_checkpoint_alignment": null,
+        "num_heads": 1,
+        "tokens_per_state": -1,
+        "tp_replicated": false
+      },
+      "pageBytes": 8060928
+    }
+  ],
+  "weights": {
+    "a3": {
+      "Embedding": {
+        "weight": 2348810240,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 1
+      },
+      "LM head": {
+        "weight": 2348810240,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 1
+      },
+      "Dense MLP": {
+        "weight": 726663168,
+        "meta": 598016,
+        "runtime_delta": 0,
+        "count": 9
+      },
+      "KDA QKV": {
+        "weight": 18232639488,
+        "meta": 20348928,
+        "runtime_delta": 0,
+        "count": 621
+      },
+      "KDA beta": {
+        "weight": 94961664,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 69
+      },
+      "KDA low-rank F": {
+        "weight": 343670784,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 138
+      },
+      "KDA composed F": {
+        "weight": 0,
+        "meta": 0,
+        "runtime_delta": 12155092992,
+        "count": 0
+      },
+      "KDA G": {
+        "weight": 12155092992,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 69
+      },
+      "KDA O": {
+        "weight": 12155092992,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 69
+      },
+      "KDA conv": {
+        "weight": 20348928,
+        "meta": 0,
+        "runtime_delta": 40697856,
+        "count": 207
+      },
+      "KDA small": {
+        "weight": 3444480,
+        "meta": 0,
+        "runtime_delta": -8832,
+        "count": 207
+      },
+      "DSA QA/KVA": {
+        "weight": 363331584,
+        "meta": 405504,
+        "runtime_delta": 0,
+        "count": 144
+      },
+      "DSA QB/KVB": {
+        "weight": 1283457024,
+        "meta": 3538944,
+        "runtime_delta": -603979776,
+        "count": 96
+      },
+      "DSA G": {
+        "weight": 4227858432,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 24
+      },
+      "DSA O": {
+        "weight": 4227858432,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 24
+      },
+      "DSA indexer": {
+        "weight": 206057472,
+        "meta": 786432,
+        "runtime_delta": 0,
+        "count": 168
+      },
+      "DSA small": {
+        "weight": 98304,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 48
+      },
+      "MoE router": {
+        "weight": 1182074880,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 184
+      },
+      "Latent MoE": {
+        "weight": 4727640064,
+        "meta": 7913472,
+        "runtime_delta": 0,
+        "count": 644
+      },
+      "Routed experts": {
+        "weight": 1361370415104,
+        "meta": 27348959232,
+        "runtime_delta": -14518583296.0,
+        "count": 989184
+      },
+      "Shared experts": {
+        "weight": 12155092992,
+        "meta": 14319616,
+        "runtime_delta": 0,
+        "count": 828
+      },
+      "Residual / norm": {
+        "weight": 8042496,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 561
+      },
+      "ViT": {
+        "weight": 802428928,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 165
+      },
+      "MM projector": {
+        "weight": 92289024,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 3
+      },
+      "DSA absorbed UK/UV": {
+        "weight": 0,
+        "meta": 0,
+        "runtime_delta": 603979776,
+        "count": 0
+      }
+    },
+    "a5": {
+      "Embedding": {
+        "weight": 2348810240,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 1
+      },
+      "LM head": {
+        "weight": 2348810240,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 1
+      },
+      "Dense MLP": {
+        "weight": 726663168,
+        "meta": 22708224,
+        "runtime_delta": 0,
+        "count": 6
+      },
+      "KDA QKV": {
+        "weight": 18232639488,
+        "meta": 569769984,
+        "runtime_delta": 0,
+        "count": 414
+      },
+      "KDA beta": {
+        "weight": 94961664,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 69
+      },
+      "KDA low-rank F": {
+        "weight": 343670784,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 138
+      },
+      "KDA composed F": {
+        "weight": 0,
+        "meta": 0,
+        "runtime_delta": 12155092992,
+        "count": 0
+      },
+      "KDA G": {
+        "weight": 12155092992,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 69
+      },
+      "KDA O": {
+        "weight": 12155092992,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 69
+      },
+      "KDA conv": {
+        "weight": 20348928,
+        "meta": 0,
+        "runtime_delta": 40697856,
+        "count": 207
+      },
+      "KDA small": {
+        "weight": 3444480,
+        "meta": 0,
+        "runtime_delta": -8832,
+        "count": 207
+      },
+      "DSA QA/KVA": {
+        "weight": 363331584,
+        "meta": 11354112,
+        "runtime_delta": 0,
+        "count": 96
+      },
+      "DSA QB/KVB": {
+        "weight": 1283457024,
+        "meta": 21233664,
+        "runtime_delta": -603979776,
+        "count": 72
+      },
+      "DSA G": {
+        "weight": 4227858432,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 24
+      },
+      "DSA O": {
+        "weight": 4227858432,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 24
+      },
+      "DSA indexer": {
+        "weight": 206057472,
+        "meta": 4718592,
+        "runtime_delta": 0,
+        "count": 144
+      },
+      "DSA small": {
+        "weight": 98304,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 48
+      },
+      "MoE router": {
+        "weight": 1182074880,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 184
+      },
+      "Latent MoE": {
+        "weight": 4727640064,
+        "meta": 147718144,
+        "runtime_delta": 0,
+        "count": 460
+      },
+      "Routed experts": {
+        "weight": 1361370415104,
+        "meta": 85085650944,
+        "runtime_delta": 0,
+        "count": 494592
+      },
+      "Shared experts": {
+        "weight": 12155092992,
+        "meta": 379846656,
+        "runtime_delta": 0,
+        "count": 552
+      },
+      "Residual / norm": {
+        "weight": 8042496,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 561
+      },
+      "ViT": {
+        "weight": 802428928,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 165
+      },
+      "MM projector": {
+        "weight": 92289024,
+        "meta": 0,
+        "runtime_delta": 0,
+        "count": 3
+      },
+      "DSA absorbed UK/UV": {
+        "weight": 0,
+        "meta": 0,
+        "runtime_delta": 603979776,
+        "count": 0
+      }
+    }
+  },
+  "draftWeightsBytes": 5373504514,
+  "notes": [
+    "Weights and KV are inside Torch allocated; allocated is inside reserved. Do not sum these rows.",
+    "HCCL is included in non-Torch and graph accounting.",
+    "Graph delta is measured across capture, not a separate independent allocation.",
+    "Physical HBM snapshot was taken while all 64 benchmark lanes were running; framework counters above were measured after graph capture.",
+    "Simulated KV; no output accuracy or real prefix-cache hit validation."
+  ],
+  "scope": {
+    "a3": "DP64 TP1 EP64 localTP16; measured loading/cache/counters; 1M is extrapolation",
+    "a5": "DP32 TP1 EP32 localTP8; checkpoint-derived weights and source-derived cache; no full-model localTP HBM measurement",
+    "c8": "User selected ordinary MLA 576 bytes/token, static independent scales; capacity scenario, not a validated DSpark C8 deployment",
+    "recover": "PR21549 source estimate; current PR rejects KV transfer, including the measured A3 P/D deployment"
+  },
+  "profileCacheShapes": [
+    {
+      "type": "CausalConv1d",
+      "inputShapes": "\"4,36864;4,36864;;62,6,36864;2;1;;1;;;;\"",
+      "inputDtypes": "DT_BF16;DT_BF16;DT_UNDEFINED;DT_BF16;INT32;INT32;DT_UNDEFINED;INT32;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED;DT_UNDEFINED"
+    },
+    {
+      "type": "QuantLightningIndexer",
+      "inputShapes": "\"4,32,128;5952,128,1,128;4,32;4,32;5952,128,1;1;1;1,1056\"",
+      "inputDtypes": "INT8;INT8;FLOAT16;FLOAT16;FLOAT16;INT32;INT32;INT32"
+    },
+    {
+      "type": "KvQuantSparseFlashAttentionVllm",
+      "inputShapes": "\"4,96,576;5952,128,1,656;5952,128,1,656;4,1,2048;;;1,1056;1;1\"",
+      "inputDtypes": "DT_BF16;INT8;INT8;INT32;DT_UNDEFINED;DT_UNDEFINED;INT32;INT32;INT32"
+    }
+  ],
+  "layers": {
+    "a3": {
+      "kda": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        12,
+        13,
+        14,
+        16,
+        17,
+        18,
+        20,
+        21,
+        22,
+        24,
+        25,
+        26,
+        28,
+        29,
+        30,
+        32,
+        33,
+        34,
+        36,
+        37,
+        38,
+        40,
+        41,
+        42,
+        44,
+        45,
+        46,
+        48,
+        49,
+        50,
+        52,
+        53,
+        54,
+        56,
+        57,
+        58,
+        60,
+        61,
+        62,
+        64,
+        65,
+        66,
+        68,
+        69,
+        70,
+        72,
+        73,
+        74,
+        76,
+        77,
+        78,
+        80,
+        81,
+        82,
+        84,
+        85,
+        86,
+        88,
+        89,
+        90
+      ],
+      "dsa": [
+        3,
+        7,
+        11,
+        15,
+        19,
+        23,
+        27,
+        31,
+        35,
+        39,
+        43,
+        47,
+        51,
+        55,
+        59,
+        63,
+        67,
+        71,
+        75,
+        79,
+        83,
+        87,
+        91,
+        92
+      ]
+    },
+    "a5": {
+      "kda": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        12,
+        13,
+        14,
+        16,
+        17,
+        18,
+        20,
+        21,
+        22,
+        24,
+        25,
+        26,
+        28,
+        29,
+        30,
+        32,
+        33,
+        34,
+        36,
+        37,
+        38,
+        40,
+        41,
+        42,
+        44,
+        45,
+        46,
+        48,
+        49,
+        50,
+        52,
+        53,
+        54,
+        56,
+        57,
+        58,
+        60,
+        61,
+        62,
+        64,
+        65,
+        66,
+        68,
+        69,
+        70,
+        72,
+        73,
+        74,
+        76,
+        77,
+        78,
+        80,
+        81,
+        82,
+        84,
+        85,
+        86,
+        88,
+        89,
+        90
+      ],
+      "dsa": [
+        3,
+        7,
+        11,
+        15,
+        19,
+        23,
+        27,
+        31,
+        35,
+        39,
+        43,
+        47,
+        51,
+        55,
+        59,
+        63,
+        67,
+        71,
+        75,
+        79,
+        83,
+        87,
+        91,
+        92
+      ]
+    }
+  }
+}

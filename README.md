@@ -4,6 +4,21 @@
 
 **交互网页：[打开 A5 分析](https://dawn952.github.io/kimi-k31-a5-analysis/)**（公开访问，无需登录）。仓库内图文可直接阅读；`docs/index.html` 是可下载离线打开的单文件交互页，无运行依赖。
 
+**新增：[1M 显存计算器 · A3 / A5](https://dawn952.github.io/kimi-k31-a5-analysis/memory.html)**（2026-11-12）。以 A3 `a0665bc1c` 的实际62块物理缓存池校准，对照 A3 DP64/TP1/localTP16 与 A5 DP32/TP1/localTP8。包含98个计算层/122个cache spec的逐层dtype、地址偏移/stride、KDA与MLA别名、页内padding、空sidecar、尾块、null、DSpark与运行时残差；可导出逐层CSV和完整JSON。
+
+每rank一条1,048,576-token请求、DSpark3、prefix align：A3物理池 **28.743530 GiB**，A5 **28.799561 GiB**，均为86个历史ID＋15个KDA ID＋1个null。A3实际62块只有17.471558 GiB，未实际承载1M。A3排布空耗2.251167 GiB，A5 2.259773 GiB，另列必要null；不是将备用池容量或必要推测副本全部称为浪费。
+
+| 单项相对基线净减少 GiB/card | A3 localTP16 | A5 localTP8 |
+|---|---:|---:|
+| DSpark普通MLA C8（576 B/token＋独立static scale） | 3.361805 | 3.361805 |
+| RecoverSSM（已扣records/metadata） | 2.507737 | 2.512681 |
+| Shared W4A8（已计量化metadata） | 0.345600 | 0.707520 |
+| 三项组合重新计算 | 5.918512 | 6.285375 |
+
+C8与RecoverSSM有共同的draft预留区收益，不能把独立值直接相加。RecoverSSM固定PR21549 `58f28bc832`，当前拒绝KV transfer；测量基线带P/D connector，故该项仅是容量反事实。C8也不是已验证的draft部署。A3运行时以实际HBM减权重/缓存的残差覆盖全部其他开销；A5显式使用可修改的A3残差迁移假设，未宣称A5峰值实测。页面同时核对物理容量与框架可见容量×utilization；1M prefill/MM新增激活等须另外预留并测量。
+
+公式源码：`src/memory-model.js`；去标识证据：`data/memory-evidence.json`；单文件离线入口：`docs/memory.html`。`node scripts/build.mjs` 同时构建原入口与计算器。
+
 **新增：[六类细粒度 TP 软件设计](design/README.md)**。明确独立 G 开关、KDA 重构、DP32TP1 全开/部分关/全关路径、权重加载、graph/idle rank 与64组合验收。已复制 [PR20574 固定版本公共源码](references/pr20574/README.md)；实现已提交上游 [Draft PR21624](https://github.com/vllm-project/vllm-ascend/pull/21624)，目标 main；已做四轮审查、950项相关单测、8项隔离编译检查及两卡执行器验证。现有服务未切换，完整DP32模型/性能/HBM验收待完成。
 
 **补充：[全局 TP>1 兼容性核查](design/tp-compatibility.md)**。当前 embedding/LM head 已有支持路径，真实类CPU检查82项通过；同时逐项解释O的头布局冲突、dense的SP归约问题，以及QKV/G的实现范围。词表fineTP是替换native TP分片，不能按两个size相乘估显存。
