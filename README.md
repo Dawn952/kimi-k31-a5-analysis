@@ -4,6 +4,8 @@
 
 **交互网页：[打开 A5 分析](https://dawn952.github.io/kimi-k31-a5-analysis/)**（公开访问，无需登录）。仓库内图文可直接阅读；`docs/index.html` 是可下载离线打开的单文件交互页，无运行依赖。
 
+**2026-11-13 当前实测：[KDA当前A5实现与三流修订方案](design/a5-kda-three-streams-20261113.md)**。基于实际DP32TP1/localTP8、C128、128k→1k、DSpark3/2.7的690个KDA层样本，确认QKV/beta合并A2A后的17.45μs Vec仍在主流串行；区分不能前移的QKV接收重排与可提前的beta/G/清零，给出包含Vector交接fence的Cube/Vector/CCU方案。方案未实现、未做新NPU测试。下方原有资源图是早期设计，不代表11月13日已运行的调度。
+
 **新增：[1M 显存计算器 · A3 / A5](https://dawn952.github.io/kimi-k31-a5-analysis/memory.html)**（2026-11-12）。以 A3 `a0665bc1c` 的实际62块物理缓存池校准，对照 A3 DP64/TP1/localTP16 与 A5 DP32/TP1/localTP8。包含98个计算层/122个cache spec的逐层dtype、地址偏移/stride、KDA与MLA别名、页内padding、空sidecar、尾块、null、DSpark与运行时残差；可导出逐层CSV和完整JSON。
 
 每rank一条1,048,576-token请求、DSpark3、prefix align：A3物理池 **28.743530 GiB**，A5 **28.799561 GiB**，均为86个历史ID＋15个KDA ID＋1个null。A3实际62块只有17.471558 GiB，未实际承载1M。A3排布空耗2.251167 GiB，A5 2.259773 GiB，另列必要null；不是将备用池容量或必要推测副本全部称为浪费。

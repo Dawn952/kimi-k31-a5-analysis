@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="670" viewBox="0 0 1300 670">
+<rect width="1300" height="670" fill="#f8fafc"/>
+<text x="28" y="43" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="26" fill="#172b42">下一步：beta 提前返回，复用 aux 做 Vec，形成 Cube / Vector / CCU 三流</text>
+<text x="28" y="74" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#526579">待实现方案 · 横向距离不代表时长 · QKV 接收重排仍须等其 A2A · 不承诺全部隐藏或端到端收益</text>
+<polyline points="174,178 1270,178" fill="none" stroke="#d9e2ec" stroke-width="1"/>
+<text x="24" y="174" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="18" fill="#172b42">S_main</text>
+<text x="24" y="199" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="14" fill="#526579">主计算 / 消费者</text>
+<polyline points="174,352 1270,352" fill="none" stroke="#d9e2ec" stroke-width="1"/>
+<text x="24" y="348" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="18" fill="#172b42">S_aux</text>
+<text x="24" y="373" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="14" fill="#526579">复用持久 F / beta 流</text>
+<polyline points="174,510 1270,510" fill="none" stroke="#d9e2ec" stroke-width="1"/>
+<text x="24" y="506" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="18" fill="#172b42">S_comm</text>
+<text x="24" y="531" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="14" fill="#526579">有序 CCU 提交</text>
+<polyline points="366,126 673,126" fill="none" stroke="#7756b7" stroke-width="1" stroke-dasharray="7 5"/>
+<polyline points="673,126 673,571" fill="none" stroke="#7756b7" stroke-width="1" stroke-dasharray="7 5"/>
+<polyline points="673,571 366,571" fill="none" stroke="#7756b7" stroke-width="1" stroke-dasharray="7 5"/>
+<polyline points="366,571 366,126" fill="none" stroke="#7756b7" stroke-width="1" stroke-dasharray="7 5"/>
+<rect x="366" y="126" width="307" height="445" rx="12" fill="none" stroke="#7756b7" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="520" y="112" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="18" fill="#7756b7">候选三流窗口：保留真实数据依赖</text>
+<rect x="180" y="147" width="126" height="62" rx="8" fill="#ccfbf1" stroke="none" stroke-width="1.5"/>
+<text x="243.0" y="173.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">MX input</text>
+<text x="243.0" y="195.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">quant</text>
+<rect x="390" y="147" width="238" height="62" rx="8" fill="#dbeafe" stroke="none" stroke-width="1.5"/>
+<text x="509.0" y="173.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">QKV GEMM</text>
+<text x="509.0" y="195.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">AI_CORE / Cube</text>
+<rect x="760" y="147" width="115" height="62" rx="8" fill="#ccfbf1" stroke="none" stroke-width="1.5"/>
+<text x="817.5" y="173.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">QKV 重排</text>
+<text x="817.5" y="195.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">双条件 join</text>
+<rect x="900" y="147" width="100" height="62" rx="8" fill="#ccfbf1" stroke="none" stroke-width="1.5"/>
+<text x="950.0" y="184.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">Conv1d</text>
+<rect x="1030" y="147" width="110" height="62" rx="8" fill="#ccfbf1" stroke="none" stroke-width="1.5"/>
+<text x="1085.0" y="173.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">Recurrent</text>
+<text x="1085.0" y="195.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">KDA</text>
+<rect x="1160" y="147" width="102" height="62" rx="8" fill="#ccfbf1" stroke="none" stroke-width="1.5"/>
+<text x="1211.0" y="173.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">Norm</text>
+<text x="1211.0" y="195.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">G 已就绪</text>
+<rect x="180" y="321" width="126" height="62" rx="8" fill="#dbeafe" stroke="none" stroke-width="1.5"/>
+<text x="243.0" y="347.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">beta BF16</text>
+<text x="243.0" y="369.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">GEMM</text>
+<rect x="390" y="321" width="118" height="62" rx="8" fill="#ccfbf1" stroke="none" stroke-width="1.5"/>
+<text x="449.0" y="347.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">清零 +</text>
+<text x="449.0" y="369.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">G owner 重排</text>
+<rect x="530" y="321" width="130" height="62" rx="8" fill="#ccfbf1" stroke="none" stroke-width="1.5"/>
+<text x="595.0" y="347.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">beta owner</text>
+<text x="595.0" y="369.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">转置 / cast / σ</text>
+<rect x="180" y="479" width="126" height="62" rx="8" fill="#ffedd5" stroke="none" stroke-width="1.5"/>
+<text x="243.0" y="505.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">既有 G</text>
+<text x="243.0" y="527.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">A2A</text>
+<rect x="390" y="479" width="118" height="62" rx="8" fill="#ffedd5" stroke="none" stroke-width="1.5"/>
+<text x="449.0" y="505.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">提前 beta</text>
+<text x="449.0" y="527.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">A2A · BF16</text>
+<rect x="690" y="479" width="115" height="62" rx="8" fill="#ffedd5" stroke="none" stroke-width="1.5"/>
+<text x="747.5" y="505.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">QKV</text>
+<text x="747.5" y="527.0" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="17" fill="#172b42">A2A</text>
+<polyline points="306,178 390,178" fill="none" stroke="#526579" stroke-width="2"/>
+<polygon points="390,178 382.97933950487703,181.83540430883363 382.97933950487703,174.16459569116637" fill="#526579"/>
+<polyline points="875,178 900,178" fill="none" stroke="#526579" stroke-width="2"/>
+<polygon points="900,178 892.979339504877,181.83540430883363 892.979339504877,174.16459569116637" fill="#526579"/>
+<polyline points="1000,178 1030,178" fill="none" stroke="#526579" stroke-width="2"/>
+<polygon points="1030,178 1022.979339504877,181.83540430883363 1022.979339504877,174.16459569116637" fill="#526579"/>
+<polyline points="1140,178 1160,178" fill="none" stroke="#526579" stroke-width="2"/>
+<polygon points="1160,178 1152.979339504877,181.83540430883363 1152.979339504877,174.16459569116637" fill="#526579"/>
+<polyline points="508,352 530,352" fill="none" stroke="#526579" stroke-width="2"/>
+<polygon points="530,352 522.979339504877,355.83540430883363 522.979339504877,348.16459569116637" fill="#526579"/>
+<polyline points="306,352 342,352 342,225 390,205" fill="none" stroke="#526579" stroke-width="2"/>
+<polygon points="390,205 384.9945458155917,211.24062724473987 382.0442348087966,204.15988082843165" fill="#526579"/>
+<text x="311" y="251" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="14" fill="#526579">beta ready</text>
+<polyline points="306,352 340,352 340,510 390,510" fill="none" stroke="#526579" stroke-width="2"/>
+<polygon points="390,510 382.97933950487703,513.8354043088336 382.97933950487703,506.16459569116637" fill="#526579"/>
+<polyline points="242,211 242,275 395,275 395,319" fill="none" stroke="#526579" stroke-width="1"/>
+<polygon points="395,319 391.16459569116637,311.97933950487703 398.83540430883363,311.97933950487703" fill="#526579"/>
+<text x="185" y="253" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="14" fill="#526579">quantDone / V 交接</text>
+<polyline points="508,510 548,510 548,385" fill="none" stroke="#7756b7" stroke-width="2"/>
+<polygon points="548,385 551.8354043088336,392.02066049512297 544.1645956911664,392.02066049512297" fill="#7756b7"/>
+<text x="550" y="428" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="14" fill="#7756b7">β 接收完成</text>
+<polyline points="306,510 324,510 324,428 410,428 410,385" fill="none" stroke="#526579" stroke-width="2"/>
+<polygon points="410,385 413.83540430883363,392.02066049512297 406.16459569116637,392.02066049512297" fill="#526579"/>
+<text x="183" y="424" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="14" fill="#526579">G 接收完成</text>
+<polyline points="628,178 708,178 708,477" fill="none" stroke="#526579" stroke-width="2"/>
+<polygon points="708,477 704.1645956911664,469.97933950487703 711.8354043088336,469.97933950487703" fill="#526579"/>
+<text x="642" y="244" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="14" fill="#526579">QKV ready</text>
+<polyline points="805,479 819,479 819,281" fill="none" stroke="#b5473c" stroke-width="2"/>
+<polygon points="819,281 822.8354043088336,288.02066049512297 815.1645956911664,288.02066049512297" fill="#b5473c"/>
+<text x="825" y="462" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="15" fill="#b5473c">必须等待</text>
+<polyline points="660,352 738,352 738,259 797,259" fill="none" stroke="#7756b7" stroke-width="2"/>
+<polygon points="797,259 789.979339504877,262.83540430883363 789.979339504877,255.16459569116637" fill="#7756b7"/>
+<rect x="798" y="240" width="42" height="40" rx="4" fill="#f8fafc" stroke="#7756b7" stroke-width="1.5"/>
+<text x="819" y="265" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="21" fill="#7756b7">∧</text>
+<polyline points="819,240 819,211" fill="none" stroke="#526579" stroke-width="2"/>
+<polygon points="819,211 822.8354043088336,218.02066049512297 815.1645956911664,218.02066049512297" fill="#526579"/>
+<text x="860" y="263" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="15" fill="#7756b7">QKV_rx ∧ vecDone</text>
+<text x="900" y="373" text-anchor="middle" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="15" fill="#7756b7">vecDone：G / β后处理 / 清零完成</text>
+<text x="28" y="611" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="18" fill="#172b42">β A2A 在 QKV GEMM 入队前提交；G 等待 AG 与 F_b；Vector 段交接，避免 V / V 抢占。</text>
+<text x="28" y="644" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="16" fill="#526579">删除拼接 Cat 与 β拆包 Slice；多 1 次小 collective / KDA层，总 payload 不变。QKV 重排仍在关键路径。</text>
+</svg>

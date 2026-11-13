@@ -1,0 +1,294 @@
+{
+  "date": "2026-11-13",
+  "hardware": "A5",
+  "dp": 32,
+  "tp": 1,
+  "localtp": 8,
+  "concurrency": 128,
+  "input_tokens": 131072,
+  "output_tokens": 1024,
+  "speculative_steps": 3,
+  "acceptance": 2.7,
+  "ascend_revision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+  "vllm_revision": "4ba787ec9959e566d3b587a796dff07673324da5",
+  "window": [
+    {
+      "type": "AttnResFwd",
+      "stream": "425",
+      "core": "AI_VECTOR_CORE",
+      "start_us": 0.0,
+      "duration_us": 5.427,
+      "shapes": "\"917504;917504;7168;7168;917504;7168\"",
+      "outputs": "\"114688;917504;114688\""
+    },
+    {
+      "type": "MatMulV3",
+      "stream": "422",
+      "core": "MIX_AIC",
+      "start_us": 7.239,
+      "duration_us": 8.294,
+      "shapes": "\"16,7168;128,7168\"",
+      "outputs": "\"16,128\""
+    },
+    {
+      "type": "hcom_allGather_",
+      "stream": "N/A",
+      "core": "COMMUNICATION",
+      "start_us": 7.954,
+      "duration_us": 13.955,
+      "shapes": "N/A",
+      "outputs": "N/A"
+    },
+    {
+      "type": "MatMulV3",
+      "stream": "422",
+      "core": "AI_CORE",
+      "start_us": 15.555,
+      "duration_us": 5.502,
+      "shapes": "\"16,128;12288,128\"",
+      "outputs": "\"16,12288\""
+    },
+    {
+      "type": "MatMulV3",
+      "stream": "425",
+      "core": "MIX_AIC",
+      "start_us": 22.788,
+      "duration_us": 24.619,
+      "shapes": "\"128,7168;1536,7168\"",
+      "outputs": "\"128,1536\""
+    },
+    {
+      "type": "DynamicMxQuant",
+      "stream": "425",
+      "core": "MIX_AIV",
+      "start_us": 47.527,
+      "duration_us": 5.927,
+      "shapes": "\"128,7168\"",
+      "outputs": "\"128,7168;128,112,2\""
+    },
+    {
+      "type": "MatMulV3",
+      "stream": "422",
+      "core": "MIX_AIC",
+      "start_us": 48.283,
+      "duration_us": 13.719,
+      "shapes": "\"128,7168;12,7168\"",
+      "outputs": "\"128,12\""
+    },
+    {
+      "type": "hcom_alltoall_",
+      "stream": "N/A",
+      "core": "COMMUNICATION",
+      "start_us": 48.956,
+      "duration_us": 9.013,
+      "shapes": "N/A",
+      "outputs": "N/A"
+    },
+    {
+      "type": "QuantBatchMatmulV3",
+      "stream": "425",
+      "core": "AI_CORE",
+      "start_us": 62.654,
+      "duration_us": 23.776,
+      "shapes": "\"128,7168;1,144,448,16,32;1,112,4608,2;128,112,2\"",
+      "outputs": "\"1,128,4608\""
+    },
+    {
+      "type": "ConcatD",
+      "stream": "425",
+      "core": "AI_VECTOR_CORE",
+      "start_us": 86.452,
+      "duration_us": 5.994,
+      "shapes": "\"128,4608;128,12\"",
+      "outputs": "\"128,4620\""
+    },
+    {
+      "type": "ZerosLike",
+      "stream": "425",
+      "core": "AI_VECTOR_CORE",
+      "start_us": 92.517,
+      "duration_us": 4.219,
+      "shapes": "\"1,16,96,128\"",
+      "outputs": "\"1,16,96,128\""
+    },
+    {
+      "type": "hcom_alltoall_",
+      "stream": "N/A",
+      "core": "COMMUNICATION",
+      "start_us": 93.995,
+      "duration_us": 10.491,
+      "shapes": "N/A",
+      "outputs": "N/A"
+    },
+    {
+      "type": "AsStrided",
+      "stream": "425",
+      "core": "AI_VECTOR_CORE",
+      "start_us": 105.505,
+      "duration_us": 6.458,
+      "shapes": "\"591360;5;5;1\"",
+      "outputs": "\"16,3,8,12,128\""
+    },
+    {
+      "type": "Slice",
+      "stream": "425",
+      "core": "AI_VECTOR_CORE",
+      "start_us": 111.985,
+      "duration_us": 2.443,
+      "shapes": "\"8,16,4620;3;3\"",
+      "outputs": "\"8,16,12\""
+    },
+    {
+      "type": "Transpose",
+      "stream": "425",
+      "core": "AI_VECTOR_CORE",
+      "start_us": 114.45,
+      "duration_us": 3.538,
+      "shapes": "\"8,16,12;3\"",
+      "outputs": "\"16,8,12\""
+    },
+    {
+      "type": "Cast",
+      "stream": "425",
+      "core": "AI_VECTOR_CORE",
+      "start_us": 118.01,
+      "duration_us": 1.951,
+      "shapes": "\"1,16,96\"",
+      "outputs": "\"1,16,96\""
+    },
+    {
+      "type": "Sigmoid",
+      "stream": "425",
+      "core": "AI_VECTOR_CORE",
+      "start_us": 119.983,
+      "duration_us": 2.819,
+      "shapes": "\"1,16,96\"",
+      "outputs": "\"1,16,96\""
+    },
+    {
+      "type": "CausalConv1d",
+      "stream": "425",
+      "core": "MIX_AIV",
+      "start_us": 122.824,
+      "duration_us": 15.128,
+      "shapes": "\"16,36864;4,36864;;74,6,36864;5;4;;4;;;;\"",
+      "outputs": "\"16,36864\""
+    },
+    {
+      "type": "RecurrentKda",
+      "stream": "425",
+      "core": "AI_VECTOR_CORE",
+      "start_us": 137.974,
+      "duration_us": 62.927,
+      "shapes": "\"589824;577536;565248;1,16,96,128;1,16,96;1313886208;5;4,4;96;12288;4\"",
+      "outputs": "\"196608;1313886208;1313886208\""
+    },
+    {
+      "type": "Transpose",
+      "stream": "425",
+      "core": "AI_VECTOR_CORE",
+      "start_us": 200.971,
+      "duration_us": 7.184,
+      "shapes": "\"8,16,12,128;4\"",
+      "outputs": "\"16,8,12,128\""
+    },
+    {
+      "type": "layer_norm_gated_fwd_kernel",
+      "stream": "425",
+      "core": "AI_VECTOR_CORE",
+      "start_us": 208.177,
+      "duration_us": 5.21,
+      "shapes": "N/A",
+      "outputs": "N/A"
+    },
+    {
+      "type": "Transpose",
+      "stream": "425",
+      "core": "AI_VECTOR_CORE",
+      "start_us": 213.409,
+      "duration_us": 5.485,
+      "shapes": "\"16,8,1536;3\"",
+      "outputs": "\"8,16,1536\""
+    },
+    {
+      "type": "hcom_alltoall_",
+      "stream": "N/A",
+      "core": "COMMUNICATION",
+      "start_us": 219.722,
+      "duration_us": 9.35,
+      "shapes": "N/A",
+      "outputs": "N/A"
+    },
+    {
+      "type": "MatMulV3",
+      "stream": "425",
+      "core": "AI_CORE",
+      "start_us": 229.867,
+      "duration_us": 26.082,
+      "shapes": "\"128,1536;7168,1536\"",
+      "outputs": "\"128,7168\""
+    },
+    {
+      "type": "hcom_reduceScatter_",
+      "stream": "N/A",
+      "core": "COMMUNICATION",
+      "start_us": 256.866,
+      "duration_us": 28.344,
+      "shapes": "N/A",
+      "outputs": "N/A"
+    }
+  ],
+  "aggregate": {
+    "sample_count": 690,
+    "recurrent_count": 690,
+    "metrics": {
+      "qkv_gemm_us": {
+        "median": 23.249000000000002,
+        "mean": 23.283760869565217,
+        "min": 22.463,
+        "max": 24.284
+      },
+      "concat_us": {
+        "median": 5.6795,
+        "mean": 5.697652173913044,
+        "min": 5.092,
+        "max": 6.803
+      },
+      "qkv_beta_a2a_us": {
+        "median": 10.628,
+        "mean": 10.782726086956522,
+        "min": 9.83,
+        "max": 14.429
+      },
+      "dependent_preconv_vec_us": {
+        "median": 17.448,
+        "mean": 17.432821739130436,
+        "min": 15.421,
+        "max": 19.166
+      },
+      "zeros_overlap_us": {
+        "median": 2.8614999999990687,
+        "mean": 2.8999275362331294,
+        "min": 2.083999999998923,
+        "max": 4.572999999974854
+      },
+      "vec_start_after_a2a_end_us": {
+        "median": 0.82100000011269,
+        "mean": 0.8329202898544295,
+        "min": 0.6559999999590218,
+        "max": 1.1339999999618158
+      }
+    }
+  },
+  "communication": {
+    "current": "one fused BF16 QKV+beta A2A",
+    "proposed": "separate early BF16 beta A2A; QKV A2A remains after QKV GEMM",
+    "qkv_send_buffer_bytes": 1179648,
+    "beta_send_buffer_bytes": 3072,
+    "beta_wire_send_bytes_without_self": 2688,
+    "total_payload_change_bytes": 0,
+    "additional_collectives_per_kda_layer": 1
+  },
+  "proposal_status": "design only; no runtime change or new NPU test",
+  "current_collective_api": "dist.all_to_all_single with equal padded splits"
+}
