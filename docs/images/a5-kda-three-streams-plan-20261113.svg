@@ -64,7 +64,7 @@
 <polygon points="530,352 522.979339504877,355.83540430883363 522.979339504877,348.16459569116637" fill="#526579"/>
 <polyline points="306,352 342,352 342,225 390,205" fill="none" stroke="#526579" stroke-width="2"/>
 <polygon points="390,205 384.9945458155917,211.24062724473987 382.0442348087966,204.15988082843165" fill="#526579"/>
-<text x="311" y="251" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="14" fill="#526579">beta ready</text>
+<text x="311" y="308" text-anchor="start" font-family="Microsoft YaHei,DejaVu Sans,sans-serif" font-size="14" fill="#526579">betaRawReady</text>
 <polyline points="306,352 340,352 340,510 390,510" fill="none" stroke="#526579" stroke-width="2"/>
 <polygon points="390,510 382.97933950487703,513.8354043088336 382.97933950487703,506.16459569116637" fill="#526579"/>
 <polyline points="242,211 242,275 395,275 395,319" fill="none" stroke="#526579" stroke-width="1"/>

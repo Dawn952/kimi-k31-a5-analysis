@@ -112,7 +112,7 @@ def proposed():
  f.node(690,479,115,'QKV\nA2A',COMM)
  for a,b in [((306,178),(390,178)),((875,178),(900,178)),((1000,178),(1030,178)),((1140,178),(1160,178)),((508,352),(530,352))]:f.line([a,b],MUTED,2,arrow=True)
  f.line([(306,352),(342,352),(342,225),(390,205)],MUTED,2,arrow=True)
- f.text(311,237,'beta ready',14,fill=MUTED)
+ f.text(311,294,'betaRawReady',14,fill=MUTED)
  f.line([(306,352),(340,352),(340,510),(390,510)],MUTED,2,arrow=True)
  f.line([(242,211),(242,275),(395,275),(395,319)],MUTED,1,arrow=True)
  f.text(185,239,'quantDone / V 交接',14,fill=MUTED)
