@@ -15,7 +15,7 @@ const html=`<!doctype html>
 const currentKda=`<section class="panel public-evidence kda-current"><h2>2026-11-13 · 当前 A5 KDA 与三流修订</h2><p>固定实际部署版本3634a7eae948；DP32TP1/localTP8，C128、128k输入/1k输出、DSpark preview 3步/固定2.7。690个KDA层样本确认：QKV/beta合并返回后，17.45μs Vec仍在主流排队。下一步方案未实现、未做新NPU测试；框线只圈跨资源候选窗口，Vector阶段保留交接等待。</p><p><a href="https://github.com/Dawn952/kimi-k31-a5-analysis/blob/main/design/a5-kda-three-streams-20261113.md">完整依赖、通信代价、事件接线与验收</a></p><style>.kda-current svg{display:block;width:100%;height:auto;margin:20px 0}</style>${fs.readFileSync(path.join(root,'docs/images/a5-kda-current-20261113.svg'),'utf8')}${fs.readFileSync(path.join(root,'docs/images/a5-kda-three-streams-plan-20261113.svg'),'utf8')}</section><h2>下方保留早期设计交互模型；当前实测以上图及新报告为准</h2>`;
 const outputHtml=html.replace('实现 PR21624 · Draft','实现 PR21624 · Open')
   .replace('上游 Draft PR21624','上游 PR21624（历史验证记录）')
-  .replace('<main id="main">','<p><a href="#shared-current">先看当前 Shared expert localTP · 411236ee9</a></p>'+currentKda+'<main id="main">');
+  .replace('<main id="main">','<p><a href="#shared-current">先看当前 Shared expert localTP · 976ea36e9</a></p>'+currentKda+'<main id="main">');
 fs.writeFileSync(path.join(root,'docs/index.html'),outputHtml);
 fs.writeFileSync(path.join(root,'docs/images/shared-localtp-current-20261117.svg'),
   (await import('node:module')).createRequire(import.meta.url)('../src/shared-tp-current.js').svg);

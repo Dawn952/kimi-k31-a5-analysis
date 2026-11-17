@@ -5,7 +5,7 @@
   <rect width="1380" height="615" rx="20" fill="#0d1928"/>
   <g font-family="Segoe UI,Microsoft YaHei,sans-serif" fill="#e5eff8">
   <text x="30" y="40" font-size="23" font-weight="700">01 / Shared expert localTP · 当前生产代码</text>
-  <text x="30" y="69" font-size="16" fill="#a9bfce">PR21624 · 411236ee9 · P = shared TP size；C = 每 owner 统一容量；H = hidden；M = intermediate</text>
+  <text x="30" y="69" font-size="16" fill="#a9bfce">PR21624 · 976ea36e9 · P = shared TP size；C = 每 owner 统一容量；H = hidden；M = intermediate</text>
   <g fill="#162b3e" stroke="#355367" stroke-width="1.5">
     <rect x="30" y="105" width="175" height="155" rx="12"/>
     <rect x="245" y="105" width="175" height="155" rx="12"/>
@@ -23,19 +23,19 @@
     <text x="46" y="175">X_p: [C,H]</text><text x="46" y="204">各 owner 不同请求</text><text x="46" y="235">padding 已统一</text>
     <text x="261" y="175">X: [P·C,H]</text><text x="261" y="204">按 owner 顺序拼行</text><text x="261" y="235">由 runner 发起</text>
     <text x="476" y="175">Wg/Wu: [M/P,H]</text><text x="476" y="204">各得 [P·C,M/P]</text><text x="476" y="235">同一中间维切片</text>
-    <text x="726" y="175">Act(gate) × up</text><text x="726" y="204">Z: [P·C,M/P]</text><text x="726" y="235">量化由 scheme 决定</text>
+    <text x="726" y="175">配置的激活函数</text><text x="726" y="204">Z: [P·C,M/P]</text><text x="726" y="235">量化由 scheme 决定</text>
     <text x="951" y="175">Wd: [H,M/P]</text><text x="951" y="204">partial [P·C,H]</text><text x="951" y="235">Linear 不归约</text>
     <text x="1166" y="175">先求和，再分行</text><text x="1166" y="204">owner p: [C,H]</text><text x="1166" y="235">与 routed 输出相加</text>
   </g>
   <g stroke="#73e4cb" stroke-width="2" marker-end="url(#shared-arrow)"><path d="M205 181H239"/><path d="M420 181H454"/><path d="M670 181H704"/><path d="M895 181H929"/><path d="M1110 181H1144"/></g>
   <rect x="30" y="288" width="1320" height="80" rx="12" fill="#143631"/>
   <text x="50" y="319" font-size="19" fill="#91f3d4">设计目的：每卡投影权重约为完整权重的 1/P；均衡、无额外 padding 时，投影 FLOPs 基本不变。</text>
-  <text x="50" y="348" font-size="17" fill="#c3d9d4">每卡从 C 行 × 完整 M，变成 P·C 行 × M/P；新增 AG/RS 与量化/激活开销需单独计量，不能据此宣称加速。</text>
+  <text x="50" y="348" font-size="17" fill="#c3d9d4">每卡从 C 行 × 完整 M，变成 P·C 行 × M/P；新增 AG/RS、输入量化和 padding 成本须另计；activation 元素数不因 P 增大，不能据此宣称加速。</text>
   <g font-size="17">
   <text x="30" y="412" fill="#73e4cb">公共 localTP：配置与组管理；相同 size 复用 group；DP 请求容量 / graph 协调。</text>
   <text x="30" y="451" fill="#8dbdff">Shared 域公共能力：配对切 gate/up/down，AG → MLP → RS；GLM 等可复用，须满足布局与量化契约。</text>
-  <text x="30" y="490" fill="#e9bc79">Kimi 可用窗口：AG ↔ routed latent-down；RS ↔ routed latent-up；无该投影仍可用基本 shared 路径。</text>
+  <text x="30" y="490" fill="#e9bc79">Kimi 可用窗口：开启多流且有 latent 投影：AG ↔ routed down；RS ↔ routed up；基本路径不依赖这些投影。</text>
   <text x="30" y="529" fill="#b9d0de">A3 INT8 与 A5 MXFP：权重布局 / AG / RS 相同；动态量化、scale、激活融合与 matmul 的 scheme 不同。</text>
-  <text x="30" y="568" fill="#b9d0de">按 routed QuantType 初选；W8A8MXFP 分支保留 Linear。路径名不能证明 shared 实际权重位宽。</text>
+  <text x="30" y="568" fill="#b9d0de">按 shared Linear 的实际 scheme 选路；W8A8MXFP 保留 Linear；真实 INT4 / FP8 保留自身 wrapper。</text>
   <text x="30" y="597" font-size="14" fill="#93adbf">逻辑 shape；量化后的物理转置、packing、scale 布局由 quant scheme 管理。本图为源码事实，非时序实测。</text>
   </g></svg>

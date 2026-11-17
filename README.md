@@ -4,7 +4,7 @@
 
 **交互网页：[打开 A5 分析](https://dawn952.github.io/kimi-k31-a5-analysis/)**（公开访问，无需登录）。仓库内图文可直接阅读；`docs/index.html` 是可下载离线打开的单文件交互页，无运行依赖。
 
-**2026-11-17 当前代码：[Shared expert localTP 逐行学习入口](https://dawn952.github.io/kimi-k31-a5-analysis/#shared-current)**。PR21624 已整合 main `8cd3c3762`，head `411236ee9`；本节独立展示 shared 权重、AG/RS、量化路径、公共/模型边界。当前源码事实与以下历史性能样本分开。[静态链路图](docs/images/shared-localtp-current-20261117.svg)。
+**2026-11-17 当前代码：[Shared expert localTP 逐行学习入口](https://dawn952.github.io/kimi-k31-a5-analysis/#shared-current)**。PR21624 已整合 main `8cd3c3762`，head `976ea36e9`；本节独立展示 shared 权重、AG/RS、量化路径、公共/模型边界。当前源码事实与以下历史性能样本分开。[静态链路图](docs/images/shared-localtp-current-20261117.svg)。
 
 **2026-11-13 历史实测：[KDA当前A5实现与三流修订方案](design/a5-kda-three-streams-20261113.md)**。基于实际DP32TP1/localTP8、C128、128k→1k、DSpark3/2.7的690个KDA层样本，确认QKV/beta合并A2A后的17.45μs Vec仍在主流串行；区分不能前移的QKV接收重排与可提前的beta/G/清零，给出包含Vector交接fence的Cube/Vector/CCU方案。方案未实现、未做新NPU测试。下方原有资源图是早期设计，不代表11月13日已运行的调度。
 
