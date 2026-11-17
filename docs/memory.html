@@ -459,7 +459,8 @@ ${p.platform==='a3'?`metadata通道数 = 92层 × (2个列投影×6144/${p.local
     const mainRegion=DSA*mainPage,indexRegion=DSA*indexPage,draftRegion=DRAFT*draftPage;
     const bytesPerId=mainRegion+indexRegion+draftRegion;
     const totalHistory=Math.ceil((p.context+p.output+p.spec)/coverage);
-    // Full cache-group blocks only. DSpark/EAGLE may drop one complete tail block.
+    // Conservative whole-block sharing scenario, not a runtime APC hit predictor.
+    // Fine-grained APC can replay one hash unit without losing a whole physical ID.
     const sharedIds=p.shared?Math.max(0,Math.floor(p.context/coverage)-(p.dropTail?1:0)):0;
     const privateHistory=totalHistory-sharedIds;
     const copies=2+(p.recover?0:p.spec),groups=3,stateIdsPerRequest=groups*copies;
@@ -501,21 +502,23 @@ ${p.platform==='a3'?`metadata通道数 = 92层 × (2个列投影×6144/${p.local
     <div class="dcp-inputs">
     ${[['context','共享输入 tokens'],['output','每请求输出 tokens'],['blockSize','每卡物理 block_size'],['spec','DSpark推测 tokens'],['requests','展示的请求数 / engine'],['maxSeqs','max_num_seqs / engine'],['kvGiB','图捕获后净KV预算 GiB / 卡'],['weightsGiB','加载驻留扣已含records GiB / 卡']].map(([k,label])=>`<label>${label}<input data-dcp="${k}" type="number" min="0" step="${k.endsWith('GiB')?'any':'1'}" value="${p[k]}"></label>`).join('')}
     <label>其他运行时 GiB / 卡（未知留空）<input data-dcp="runtimeGiB" type="number" min="0" step="0.01" value="${p.runtimeGiB??''}"></label>
-    ${[['shared','所有请求共享同一份前缀'],['dropTail','DSpark整块尾部保护（少共享1块）'],['indexerSharded','Kimi Indexer按DCP8切分'],['recover','开启 RecoverSSM'],['c8','DSpark C8（576 B/token容量方案）'],['budgetIncludesRecords','输入KV预算已扣records及量化参数']].map(([k,label])=>`<label class="mem-check"><input data-dcp="${k}" type="checkbox" ${p[k]?'checked':''}>${label}</label>`).join('')}
+    ${[['shared','所有请求共享同一份前缀'],['dropTail','额外私有1个整逻辑块（保守重放假设）'],['indexerSharded','Kimi Indexer按DCP8切分'],['recover','开启 RecoverSSM'],['c8','DSpark C8（576 B/token容量方案）'],['budgetIncludesRecords','输入KV预算已扣records及量化参数']].map(([k,label])=>`<label class="mem-check"><input data-dcp="${k}" type="checkbox" ${p[k]?'checked':''}>${label}</label>`).join('')}
     </div><div class="mem-toolbar"><button id="dcp-preset">按图捕获后预算（默认）</button><button id="dcp-allocated">按历史已分配497块</button><button id="dcp-json">导出DCP计算JSON</button><a href="#mem-controls">原DP64/DP32 localTP计算器</a></div>
-    <div class="mem-kpis"><div class="mem-kpi"><span>净KV预算下的规划容量（未套调度限制）</span><strong>${r.capacity} <small>/ engine</small></strong><small>4个DP合计 ${r.globalCapacity}；按align 2页上限预留</small></div>
+    <div class="mem-kpis"><div class="mem-kpi"><span>净KV预算下的容量规划（整块共享假设）</span><strong>${r.capacity} <small>/ engine</small></strong><small>4个DP合计 ${r.globalCapacity}；按align 2页上限预留，非已验证最大并发</small></div>
     <div class="mem-kpi"><span>再受max_num_seqs=${p.maxSeqs}限制</span><strong>${r.globalAdmitted} <small>全局并发</small></strong><small>${r.admitted}/engine；不代表吞吐或SLO保证</small></div>
     <div class="mem-kpi"><span>当前${p.requests}/engine的完整物理池</span><strong>${g(r.poolBytes)} <small>GiB/卡</small></strong><small>${r.ids} IDs；${r.ids>r.poolIds?'超过当前KV预算':'在当前KV预算内'}${p.requests>p.maxSeqs?'；超过max_num_seqs':''}</small></div></div>
     <h3>四个DP engine的实测预算基线</h3>${table(['engine','profile KV GiB/卡','历史池IDs（推导）','图后守util建议 GiB/卡','新池IDs','共享前缀规划并发'],E.profiles.map(x=>{
       const s=calculate({...p,kvGiB:x.fitRequestedBytes/GiB,budgetIncludesRecords:true});
       return `<tr><td>DP${x.dp}</td><td class="num">${x.profileKvGiB.toFixed(2)}</td><td class="num">${x.allocatedPoolIdsInferred}</td><td class="num">${g(x.fitRequestedBytes)}</td><td class="num">${s.poolIds}</td><td class="num">${Math.min(s.capacity,p.maxSeqs)}</td></tr>`;
     }))}<p>上表均按当前页面的cache几何、共享及RecoverSSM设置重新计算；历史预算仅适用于原spec3/max_num_seqs64的图档位。默认采用最紧张worker预算统一规划；按各DP独立预算并允许不等量分流时，合计为 ${E.profiles.reduce((n,x)=>n+Math.min(calculate({...p,kvGiB:x.fitRequestedBytes/GiB,budgetIncludesRecords:true}).capacity,p.maxSeqs),0)} 条。所有值是容量规划，不是并发完成实测。历史池ID由启动token容量反推并与paired成本复核；不是直接读取的cache-spec dump。</p>
-    <h3>128K“100%命中”的实际边界</h3><p>物理页 ${b(p.blockSize)} token/卡 × DCP8 = <b>${b(r.coverage)} token/完整逻辑块</b>。输入 ${b(p.context)} token 中，可共享 ${r.sharedIds} 个完整F组ID = <b>${b(r.sharedTokens)} token（${(100*r.sharedTokens/p.context).toFixed(3)}%）</b>，其余尾部由每请求私有页承接。${p.shared?'共用前缀每个DP engine分别保存一份，4个engine之间不共享显存。':'本次关闭共享，历史按每请求独立计入。'} “内容完全相同”不等于allocator能报告100%的token命中；这里采用整块对齐与可选DSpark尾块保护。部分块共享/CoW若由新版本实现，需要另行导入该版本的spec和命中证据。</p>
+    <h3>整块物理共享账本，不等于APC token命中率</h3><p>物理页 ${b(p.blockSize)} token/卡 × DCP8 = <b>${b(r.coverage)} token/完整逻辑块</b>。本页按整块假设计 ${r.sharedIds} 个共用F组ID，完整块覆盖 <b>${b(r.sharedTokens)} token（输入的${(100*r.sharedTokens/p.context).toFixed(3)}%）</b>；这个比例不是D侧实测APC命中率。${p.shared?'共用前缀每个DP engine分别保存一份，4个engine之间不共享显存。':'本次关闭共享，历史按每请求独立计入。'}</p>
+    <div class="mem-note"><b>额外减1个整块是本页的保守物理排布假设，尚未由该D服务的有效匹配粒度与命中block IDs验证。</b>已读取的实验容器源码支持细粒度APC/CoW：FullAttentionManager裁尾为 <code>hit_length -= min(alignment_tokens, block_size)</code>。细粒度模式可能只退一个hash单位，并不丢掉一整份${b(r.coverage)}-token物理块；关闭上述整块选项也不等于关闭DSpark重放。此前208/210等数值均须连同本页整块策略理解，不能当作已验证的真实最大并发。</div>
+    <details><summary>向下取整、DSpark裁尾和P/D拉取分别做什么</summary><p><b>取整：</b>131072 = 10×12288 + 8192。10个完整逻辑块与8192-token部分块分开核算，取整本身没有再丢一个完整块。<b>裁尾：</b>本地前缀查找在EAGLE/DSpark路径下缩短复用边界，以取得draft需要的hidden states并保护相关验证窗口；这是命中列表的裁剪，不是把旧KV从显存删除。只有整块匹配/重放策略才可写成10−1=9；细粒度模式不能直接套这个式子。</p><p><b>拉取：</b>Mooncake根据外部可提供token数减去本地已命中token数，向该请求的新分配物理块补齐KV。以本页整块假设为例，本地保留110592 token；若P提供131071 token，需拉20479 token，再由D重算最后1个prompt token。这条N−1规则是1个token，与额外裁1个block不同。</p><p><b>共享：</b>异步拉取成功后，Scheduler调用cache_blocks登记有效前缀，后续请求可以复用。被当前请求裁掉的块不会被自动附回它的block table；外部缺口经get_new_blocks分配后，即使内容相同，也不是自动与旧块共享同一物理ID。只有请求引用相同block ID，才可在并发显存账本里只计一份。需要先完成seed预热；多个冷请求同时拉相同prompt，也不保证物理去重。</p><p><a href="https://github.com/vllm-project/vllm/blob/24420b7a341af37a9bc3186e6fc6062512e0aa58/vllm/v1/core/single_type_kv_cache_manager.py">前缀裁尾与外部分配源码</a> · <a href="https://github.com/vllm-project/vllm/blob/24420b7a341af37a9bc3186e6fc6062512e0aa58/vllm/v1/core/sched/scheduler.py">拉取完成后cache_blocks</a> · <a href="https://github.com/Dawn952/vllm-ascend/blob/3634a7eae94897d1a7b14d00807323e5af6b4a04/vllm_ascend/distributed/kv_transfer/kv_p2p/mooncake_connector.py">Mooncake外部缺口与N−1规则</a></p></details>
     <div class="mem-code">每ID成本 = 24层 × (${b(p.blockSize)} token × 656 B主MLA + ${b(p.blockSize)} token × 132 B索引 × ${p.indexerSharded?1:8})
              + 5层 × ${b(p.blockSize)} token × ${p.c8?576:1152} B普通MLA
            = ${b(r.bytesPerId)} B = ${g(r.bytesPerId)} GiB
 完整历史ID/请求 = ceil((${b(p.context)} 输入 + ${b(p.output)} 输出 + ${p.spec} lookahead) / ${b(r.coverage)}) = ${r.totalHistory}
-共享ID = ${p.shared?`max(0, floor(${b(p.context)} / ${b(r.coverage)}) − ${p.dropTail?1:0} 尾块保护)`:'0（关闭共享）'} = ${r.sharedIds}
+共享ID（整块假设） = ${p.shared?`max(0, floor(${b(p.context)} / ${b(r.coverage)}) − ${p.dropTail?1:0} 整块重放预留)`:'0（关闭共享）'} = ${r.sharedIds}
 私有历史ID/请求 = ${r.totalHistory} − ${r.sharedIds} = ${r.privateHistory}
 KDA ID/请求 = 3组 × (2个align基础页 + ${p.recover?0:p.spec}个投机state页) = ${r.stateIdsPerRequest}
 总池ID = ${r.sharedIds} 共享 + ${p.requests} 请求 × (${r.privateHistory} 私有历史 + ${r.stateIdsPerRequest} KDA) + 1 null = ${r.ids}
