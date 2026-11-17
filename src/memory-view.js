@@ -157,7 +157,7 @@ KDA 每slot padding = 物理页8,060,928 B − 有效内容6,733,824 B = 1,327,1
 当前采用 ${p.scaleBytesPerLayer} B/层 × 5个draft层 = ${B(5*p.scaleBytesPerLayer)} B ${p.scaleBytesPerLayer===defaultScale?'（默认FAKQuant规划）':'（用户已覆盖默认值）'}</div>
       <p>当前实测 draft 为 <code>auto/BF16</code>。现有普通 MLA 会在 <code>fa_quant_layer=False</code> 时回退模型 dtype；因此仅改 cache dtype 参数不能视为已完成 C8。这里给的是所选布局的容量测算，需配套量化参数与 kernel 验证。</p>
       <h3>RecoverSSM：省 state 副本，新增小型记录</h3>
-      <div class="mem-code">align基础2页 = 1个当前state + 1个对齐checkpoint；原来另有3个推测state页
+      <div class="mem-code">align基础2页 = 跨block切换时旧源state与新目标state同时存在的容量上限；不是始终常驻2页；原来另有3个推测state页
 所以 native align为2 + 3 = 5页/层/请求；RecoverSSM为2 + 0 = 2页；none模式不留对齐checkpoint，为4→1页
 correction = 69个KDA层 × ${p.maxSeqs} 请求槽(max_num_seqs) × 96头 × 4验证token × 128个value维度 × 4 B/FP32
 = ${B(r.rmem.correction)} B；4验证token = 1个当前token + 3个推测token
@@ -173,7 +173,7 @@ metadata合计 = ${B(10*69*8)} + ${B(69*96*4)} + ${B(69*96*128*4)} + ${B(6*p.max
 = ${B(r.rmem.total)} B ÷ 1024³ B/GiB = ${G(r.rmem.total)} GiB</div>
       ${trace('10个INT64数组 = conv的base/block/dim/token四种地址或步长 + state的base/block两种 + correction的base/block两种 + key_gate的base/block两种。6个INT32请求数组是commit_lens、state_commit_lens、boundary_commit_lens、final_state_indices、boundary_state_indices、boundary_recovery_lens。上述记录按max_num_seqs请求槽预分配，不按池页数，也不只按当前活跃请求数。')}
       <p>69层FP32 state的3个额外副本被去掉，不是将 DSA 的1M KV变小。当前保留其他已测 runtime 残差，只扣明确可定位的state/池变化；没有虚构 state-copy workspace 的额外收益。<b>固定cache预算时总HBM可能不降，收益变为更多可用block</b>。</p>
-      <div class="mem-note">PR21549 @ ${E.recoverHead.slice(0,10)} 当前拒绝 KV transfer。本 A3 实测基线带 P/D connector，故这是容量反事实，不能在该部署上直接打开；需要先有兼容实现或改为受支持的共置配置。</div>
+      <div class="mem-note">本节固定11月12日旧版PR21549 @ ${E.recoverHead.slice(0,10)}，该版本拒绝KV transfer，因此相对这份A3实测基线是容量反事实。11月15日合入版本已增加实验性Mooncake P/D路径及DP4/TP8/DCP8案例；见页面上方新增计算器及其版本说明，不能把旧版限制当成当前结论。</div>
       <h3>Shared expert：只改92层 shared，不动 routed、latent 或首层 dense</h3>
       <div class="mem-code">每层 gate/up [6144,7168]，down [7168,6144]：7168是模型hidden维度，6144是shared expert intermediate维度
 92个shared层 = 主模型93层 − 第0层dense MLP；每个shared层有gate、up、down共3个矩阵

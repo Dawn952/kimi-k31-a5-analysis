@@ -1,0 +1,106 @@
+{
+  "date": "2026-11-17",
+  "layoutHead": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+  "layoutUrl": "https://github.com/Dawn952/vllm-ascend/blob/3634a7eae94897d1a7b14d00807323e5af6b4a04/vllm_ascend/models/kimi_k3/paired_sfa_cache.py",
+  "recoverHead": "6ea93e43653addd3352358d02bc1ef36ca18c9fa",
+  "recoverMerge": "6abfc9dee6bc6e14067e0f7704ee5636416b87a5",
+  "prUrl": "https://github.com/vllm-project/vllm-ascend/pull/21549",
+  "budgetScope": "Matched historical A5 DP4/TP8/DCP8 RecoverSSM run on 2026-11-14. Profile KV was before graph capture; use minimum post-warmup recommendation across all 32 workers to respect requested utilization. No new NPU test.",
+  "mainWeightEstimateGiB": 56.682718738913536,
+  "draftTp8Estimate": {
+    "shardedCheckpointBytes": 4886364160,
+    "replicatedCheckpointBytes": 487140354,
+    "tp": 8,
+    "bytes": 1097935874
+  },
+  "weightScope": "Checkpoint/source estimate; main from calibrated workbook A5_Decode_TP8DCP8; draft context_proj/MLP/q_b/kv_b/o divided by TP8, q_a/kv_a/norm/Markov replicated; shared target embedding/lm_head excluded. Loader and temporary repacking require measurement.",
+  "prefixScope": "Full logical-block sharing only; one shared prefix per DP engine. DSpark may drop a complete tail block. No assumption of fractional-page reuse or measured 100% token hits.",
+  "capacityScope": "align specification upper bound (2 base state pages), not a throughput or steady-state occupancy measurement; scheduler max_num_seqs enforced separately.",
+  "profiles": [
+    {
+      "dp": 0,
+      "log": "review_s1_d0_on_20261114_104051.log",
+      "loadedGiB": 61.08,
+      "maxSeqs": 64,
+      "specTokens": 3,
+      "cliBlockSize": 768,
+      "effectiveBlockSize": 1536,
+      "profileKvGiB": 17.57,
+      "reportedCapacityTokens": 3861865,
+      "modelLen": 132096,
+      "allocatedPoolIdsInferred": 497,
+      "graphGiB": [
+        2.1,
+        2.2,
+        2.22
+      ],
+      "fitRequestedBytes": 16459464355,
+      "useAllFreeBytesDiagnostic": 23200472576
+    },
+    {
+      "dp": 1,
+      "log": "review_s1_d1_on_20261114_104056.log",
+      "loadedGiB": 61.08,
+      "maxSeqs": 64,
+      "specTokens": 3,
+      "cliBlockSize": 768,
+      "effectiveBlockSize": 1536,
+      "profileKvGiB": 17.58,
+      "reportedCapacityTokens": 3869635,
+      "modelLen": 132096,
+      "allocatedPoolIdsInferred": 498,
+      "graphGiB": [
+        2.1,
+        2.22
+      ],
+      "fitRequestedBytes": 16462839459,
+      "useAllFreeBytesDiagnostic": 23217987072
+    },
+    {
+      "dp": 2,
+      "log": "review_s1_d2_on_20261114_104105.log",
+      "loadedGiB": 61.08,
+      "maxSeqs": 64,
+      "specTokens": 3,
+      "cliBlockSize": 768,
+      "effectiveBlockSize": 1536,
+      "profileKvGiB": 17.58,
+      "reportedCapacityTokens": 3861865,
+      "modelLen": 132096,
+      "allocatedPoolIdsInferred": 497,
+      "graphGiB": [
+        2.12,
+        2.2,
+        2.22
+      ],
+      "fitRequestedBytes": 16439398051,
+      "useAllFreeBytesDiagnostic": 23187303936
+    },
+    {
+      "dp": 3,
+      "log": "review_s1_d3_on_20261114_104102.log",
+      "loadedGiB": 61.08,
+      "maxSeqs": 64,
+      "specTokens": 3,
+      "cliBlockSize": 768,
+      "effectiveBlockSize": 1536,
+      "profileKvGiB": 17.58,
+      "reportedCapacityTokens": 3861865,
+      "modelLen": 132096,
+      "allocatedPoolIdsInferred": 497,
+      "graphGiB": [
+        2.13,
+        2.22
+      ],
+      "fitRequestedBytes": 16423116451,
+      "useAllFreeBytesDiagnostic": 23175073280
+    }
+  ],
+  "postGraphBudgetBytes": 16423116451,
+  "allocatedPoolIds": 497,
+  "measuredLoadGiB": 61.08,
+  "recordsInMeasuredLoadBytes": 217055232,
+  "loadWithoutRecordsGiB": 60.8778515625,
+  "poolCountScope": "497/498/497/497 IDs reconstructed uniquely from logged token capacity: floor(pool IDs / (11 F + 3*2 KDA) * 132096) matches 3861865/3869635/3861865/3861865. 1536 is effective manager block after KDA page alignment; CLI requested 768.",
+  "loadScope": "61.08 GiB is rounded DeviceMemoryProfiler load increment including main/draft and RecoverSSM records allocated during layer construction. Subtract only known correction+key_gate payload before showing records separately; remaining load residency is not a pure checkpoint-weight measurement."
+}
