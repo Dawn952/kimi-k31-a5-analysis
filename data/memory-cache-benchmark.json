@@ -308,5 +308,92 @@
       },
       "payloadGBpsAtP50": 81.5642453162911
     }
-  ]
+  ],
+  "cowComparison": [
+    {
+      "node": "A",
+      "mode": "bulk",
+      "batch": 64,
+      "helperCalls": 1,
+      "stackCalls": 77,
+      "copyCalls": 4928,
+      "wallMs": {
+        "mean": 86.97848566666667,
+        "p50": 88.03241,
+        "p95": 90.185284,
+        "p99": 92.9966778
+      }
+    },
+    {
+      "node": "A",
+      "mode": "separate_final_wait",
+      "batch": 64,
+      "helperCalls": 64,
+      "stackCalls": 4928,
+      "copyCalls": 4928,
+      "wallMs": {
+        "mean": 246.96557900000002,
+        "p50": 245.93986999999998,
+        "p95": 258.210257,
+        "p99": 261.57784430000004
+      }
+    },
+    {
+      "node": "A",
+      "mode": "separate_per_request_wait",
+      "batch": 64,
+      "helperCalls": 64,
+      "stackCalls": 4928,
+      "copyCalls": 4928,
+      "wallMs": {
+        "mean": 209.98778333333334,
+        "p50": 215.627825,
+        "p95": 220.6449825,
+        "p99": 222.949277
+      }
+    },
+    {
+      "node": "B",
+      "mode": "bulk",
+      "batch": 64,
+      "helperCalls": 1,
+      "stackCalls": 77,
+      "copyCalls": 4928,
+      "wallMs": {
+        "mean": 89.303266,
+        "p50": 88.990795,
+        "p95": 91.621267,
+        "p99": 91.7759776
+      }
+    },
+    {
+      "node": "B",
+      "mode": "separate_final_wait",
+      "batch": 64,
+      "helperCalls": 64,
+      "stackCalls": 4928,
+      "copyCalls": 4928,
+      "wallMs": {
+        "mean": 255.23062466666667,
+        "p50": 256.15988500000003,
+        "p95": 259.164745,
+        "p99": 260.1932435
+      }
+    },
+    {
+      "node": "B",
+      "mode": "separate_per_request_wait",
+      "batch": 64,
+      "helperCalls": 64,
+      "stackCalls": 4928,
+      "copyCalls": 4928,
+      "wallMs": {
+        "mean": 259.54263633333335,
+        "p50": 259.901165,
+        "p95": 261.85964,
+        "p99": 263.678652
+      }
+    }
+  ],
+  "cowComparisonMethod": "Follow-up within each process, same 65-ID tensors and 64 distinct destinations. Three modes run sequentially: one bulk call/final wait, 64 single-pair calls/final wait, 64 single-pair calls/per-call wait. Three warmups and 30 repetitions per mode. Background services resident. This is a new run, not the earlier 100-sample run. Counts cover stack/copy_ API calls only, not all tensor operations or low-level NPU kernels."
 }
