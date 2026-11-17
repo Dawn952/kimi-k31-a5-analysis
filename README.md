@@ -4,7 +4,9 @@
 
 **交互网页：[打开 A5 分析](https://dawn952.github.io/kimi-k31-a5-analysis/)**（公开访问，无需登录）。仓库内图文可直接阅读；`docs/index.html` 是可下载离线打开的单文件交互页，无运行依赖。
 
-**2026-11-13 当前实测：[KDA当前A5实现与三流修订方案](design/a5-kda-three-streams-20261113.md)**。基于实际DP32TP1/localTP8、C128、128k→1k、DSpark3/2.7的690个KDA层样本，确认QKV/beta合并A2A后的17.45μs Vec仍在主流串行；区分不能前移的QKV接收重排与可提前的beta/G/清零，给出包含Vector交接fence的Cube/Vector/CCU方案。方案未实现、未做新NPU测试。下方原有资源图是早期设计，不代表11月13日已运行的调度。
+**2026-11-17 当前代码：[Shared expert localTP 逐行学习入口](https://dawn952.github.io/kimi-k31-a5-analysis/#shared-current)**。PR21624 已整合 main `8cd3c3762`，head `411236ee9`；本节独立展示 shared 权重、AG/RS、量化路径、公共/模型边界。当前源码事实与以下历史性能样本分开。[静态链路图](docs/images/shared-localtp-current-20261117.svg)。
+
+**2026-11-13 历史实测：[KDA当前A5实现与三流修订方案](design/a5-kda-three-streams-20261113.md)**。基于实际DP32TP1/localTP8、C128、128k→1k、DSpark3/2.7的690个KDA层样本，确认QKV/beta合并A2A后的17.45μs Vec仍在主流串行；区分不能前移的QKV接收重排与可提前的beta/G/清零，给出包含Vector交接fence的Cube/Vector/CCU方案。方案未实现、未做新NPU测试。下方原有资源图是早期设计，不代表11月13日已运行的调度。
 
 **新增：[1M 显存计算器 · A3 / A5](https://dawn952.github.io/kimi-k31-a5-analysis/memory.html)**（2026-11-12）。以 A3 `a0665bc1c` 的实际62块物理缓存池校准，对照 A3 DP64/TP1/localTP16 与 A5 DP32/TP1/localTP8。包含98个计算层/122个cache spec的逐层dtype、地址偏移/stride、KDA与MLA别名、页内padding、空sidecar、尾块、null、DSpark与运行时残差；可导出逐层CSV和完整JSON。
 
@@ -21,7 +23,7 @@ C8与RecoverSSM有共同的draft预留区收益，不能把独立值直接相加
 
 公式源码：`src/memory-model.js`；去标识证据：`data/memory-evidence.json`；单文件离线入口：`docs/memory.html`。`node scripts/build.mjs` 同时构建原入口与计算器。
 
-**新增：[六类细粒度 TP 软件设计](design/README.md)**。明确独立 G 开关、KDA 重构、DP32TP1 全开/部分关/全关路径、权重加载、graph/idle rank 与64组合验收。已复制 [PR20574 固定版本公共源码](references/pr20574/README.md)；实现已提交上游 [Draft PR21624](https://github.com/vllm-project/vllm-ascend/pull/21624)，目标 main；已做四轮审查、950项相关单测、8项隔离编译检查及两卡执行器验证。现有服务未切换，完整DP32模型/性能/HBM验收待完成。
+**新增：[六类细粒度 TP 软件设计](design/README.md)**。明确独立 G 开关、KDA 重构、DP32TP1 全开/部分关/全关路径、权重加载、graph/idle rank 与64组合验收。已复制 [PR20574 固定版本公共源码](references/pr20574/README.md)；实现已提交上游 [PR21624](https://github.com/vllm-project/vllm-ascend/pull/21624)，目标 main；已做四轮审查、950项相关单测、8项隔离编译检查及两卡执行器验证。现有服务未切换，完整DP32模型/性能/HBM验收待完成。
 
 **补充：[全局 TP>1 兼容性核查](design/tp-compatibility.md)**。当前 embedding/LM head 已有支持路径，真实类CPU检查82项通过；同时逐项解释O的头布局冲突、dense的SP归约问题，以及QKV/G的实现范围。词表fineTP是替换native TP分片，不能按两个size相乘估显存。
 
