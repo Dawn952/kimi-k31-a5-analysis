@@ -541,7 +541,7 @@ metadata = 69×10×8 B指针/stride + 69×12×4 B A_log + 69×12×128×4 B dt_bi
 当前开关${p.recover?'开':'关'}，实际计入records = ${b(r.rec.total)} B。</div>
     <p>${p.budgetIncludesRecords?'本次输入是已扣records/量化参数的KV预算，因此不重复扣。':'本次预算尚未扣records/量化参数，已先扣再向下取整分配KV池。'} RecoverSSM只移除${p.spec}份投机完整state，保留align基础容量；conv的推测历史不删除。开关前后同一请求数的物理池：关闭 ${g(off.poolBytes)} GiB，开启 ${g(on.poolBytes)} GiB（当前开关${p.recover?'开':'关'}）；临时记录须单独计入。</p>
     <h3>1M单请求对照与完整HBM口径</h3>${table(['项目','GiB/卡','口径'],[
-      tr('同拓扑1M输入、无输出、单请求KV池',single.poolBytes,`${single.totalHistory} 历史 IDs + 3×${single.copies} KDA IDs + 1 null；共享关闭。相应三类历史均DCP8分片`),
+      tr('同拓扑1M输入、无输出、单请求KV池',single.poolBytes,`${single.totalHistory} 历史 IDs + 3×${single.copies} KDA IDs + 1 null；共享关闭。仅为KV容量外推；日志max_model_len=132096，该服务配置不能直接接1M，须调长并重新profile`),
       tr('加载驻留（扣除已含records payload）',p.weightsGiB*GiB,`同拓扑加载增量61.08 GiB − 加载时已分配correction/key_gate ${g(E.recordsInMeasuredLoadBytes)} GiB；保留其余loader驻留，不冒充纯checkpoint权重`),
       tr('RecoverSSM记录及metadata',r.rec.total,'KV池之外的请求槽记录；计算完整HBM时只计一次'),
       tr('C8独立量化参数',r.scaleBytes,'启用时按5层×2352 B容量估计，未证明draft C8算子已支持'),
@@ -551,7 +551,7 @@ metadata = 69×10×8 B指针/stride + 69×12×4 B A_log + 69×12×128×4 B dt_bi
     <p>容量按align最多2页/层/请求保守规划；稳态可能仅1页。保留额外旧前缀、多份seed、外部KV临时页或不均衡DP负载会继续占池。输出1024只用来约束尾部容量；没有吞吐/SLO或max_num_batched_tokens保证。共享页可被前缀缓存淘汰，反复命中还需运行证据。</p>
     <details><summary>来源、版本和逐层排布</summary><p>paired几何、DCP切分与Kimi分片Indexer依据源码 ${E.layoutHead}，RecoverSSM公式对照已合入PR21549，head ${E.recoverHead}。预算来自11月14日review_s1实验镜像日志，非合入head原样部署；启动CLI请求768，KDA页对齐后的1536几何与日志token容量相符。旧localTP计算器仍保留11月12日基线，不能把它的TP1记录大小直接用于TP8。<a href="${E.prUrl}">PR21549及A5实验条件</a>；<a href="${E.layoutUrl}">固定版paired布局</a>。此新增项是历史测量校准的容量分析，非本场景并发压测。</p><div class="mem-code">KDA L0/1/2、4/5/6…88/89/90：每层[12,128,128] FP32 recurrent及[${3+p.spec},4608] BF16 conv。
 M1层0/4/…/88、M2层1/5/…/89、M3层2/6/…/90：各23层，overlay 24 main slots中的23个；三组使用不同ID。
-DSA L3/7/…/91及L92：各自独立[block,1536,1,656] packed主缓存及[block,1536,1,128] FP8索引 + FP32 scale（物理block_size输入可修改）。
+DSA L3/7/…/91及L92：各自独立[block,${p.blockSize},1,656] packed主缓存及[block,${p.blockSize},1,128] FP8索引 + FP32 scale（旧replicated索引另乘DCP8）。
 DSpark L93–97：5个独立普通MLA缓存，每元素${p.c8?'C8':'BF16'}；共享F组ID，不共享各层内容。
 同一ID在每层tensor中对应不同区域；每ID字节成本是24份main +24份indexer +5份draft的和。</div></details>`;
     host.querySelectorAll('[data-dcp]').forEach(el=>el.addEventListener('change',()=>{
