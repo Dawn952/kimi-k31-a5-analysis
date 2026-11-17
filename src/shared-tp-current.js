@@ -46,8 +46,8 @@
   const link=(label,file,line)=>`<a href="${source(file,line)}">${label}</a>`;
   function render(){return `<section id="shared-current" class="panel shared-current" style="margin-bottom:28px">
     <style>.shared-current svg{display:block;width:100%;height:auto;margin:20px 0}.shared-current p,.shared-current li{line-height:1.9}.shared-current code{overflow-wrap:anywhere}.shared-current .shared-scroll{overflow-x:auto}.shared-current table{min-width:640px}</style>
-    <div class="eyebrow">2026-11-17 / 当前实现 · 学习顺序 01</div><h2>共享专家：减少每卡权重，按 owner 返回结果</h2>
-    <p>源码基线 <code>${head}</code>，已整合 main <code>8cd3c3762</code>。<a href="https://github.com/vllm-project/vllm-ascend/pull/21624">Open PR21624</a>。这是当前 shared 域；下方早期通信账本与 11 月 13 日 KDA 实测保留各自版本，不计入本图。</p>
+    <div class="eyebrow">Shared expert / 源码与权重布局</div><h2>共享专家：减少每卡权重，按 owner 返回结果</h2>
+    <p>源码基线 <code>${head}</code>，已整合 main <code>8cd3c3762</code>。<a href="https://github.com/vllm-project/vllm-ascend/pull/21624">Open PR21624</a>。本图说明源码的逻辑布局；实测执行顺序以计算与通信依赖流为准，不能由可用接线窗口推断已出现重叠。</p>
     ${svg}
     <div class="shared-scroll"><table class="data-table"><thead><tr><th>逐行入口</th><th>链路职责 / 必要性</th><th>能力归属</th></tr></thead><tbody>
     <tr><td>${link('ascend_config.py:1440 / 1453','ascend_config.py',1440)}</td><td>独立 shared size；进入 graph 契约，不随 dense MLP 开关切换。拓扑与运行限制须按具体链路验证。</td><td>localTP 公共配置</td></tr>

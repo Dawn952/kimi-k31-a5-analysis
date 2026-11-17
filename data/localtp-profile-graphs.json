@@ -1,0 +1,7502 @@
+{
+  "kda": {
+    "nodes": [
+      {
+        "id": "in",
+        "title": "AttnRes / owner 输入",
+        "col": 0,
+        "row": 0,
+        "kind": "op",
+        "lines": [
+          "[16,7168] · DP owner",
+          "每卡请求不同"
+        ],
+        "description": "本例每 owner capacity=16；不能将全局 C128 并发误认为每卡 token 行数。",
+        "source": "ops/kimi_kda.py",
+        "records": [
+          {
+            "row": 62,
+            "type": "AttnResFwd",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 5.427,
+            "output": "114688;917504;114688",
+            "start_us": 0
+          }
+        ],
+        "status": "0.000–5.427 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 36,
+        "y": 90,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      },
+      {
+        "id": "f",
+        "title": "F_a → F_b（本地）",
+        "col": 1,
+        "row": 1,
+        "kind": "op",
+        "lines": [
+          "16×7168→128→12288",
+          "辅助流 422 · 两次 GEMM"
+        ],
+        "description": "本地低秩 F；连续输出 reshape 不是独立计算。",
+        "source": "ops/kimi_kda.py",
+        "records": [
+          {
+            "row": 63,
+            "type": "MatMulV3",
+            "stream": "422",
+            "core": "MIX_AIC",
+            "duration": 8.294,
+            "output": "16,128",
+            "start_us": 7.239
+          },
+          {
+            "row": 65,
+            "type": "MatMulV3",
+            "stream": "422",
+            "core": "AI_CORE",
+            "duration": 5.502,
+            "output": "16,12288",
+            "start_us": 15.555
+          }
+        ],
+        "status": "7.239–21.057 μs · s422",
+        "engine": "MIX_AIC / AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 240,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "ag",
+        "title": "Input AG",
+        "col": 3,
+        "row": 1,
+        "kind": "comm",
+        "lines": [
+          "[16,H] → [128,H]",
+          "localTP8 · 不收集 KV 状态"
+        ],
+        "description": "与 F 两次 GEMM 有实际时间交集。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 64,
+            "type": "hcom_allGather_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 13.955,
+            "output": "N/A",
+            "start_us": 7.954
+          }
+        ],
+        "status": "7.954–21.909 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 240,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "g",
+        "title": "G BF16 GEMM",
+        "col": 1,
+        "row": 2,
+        "kind": "op",
+        "lines": [
+          "[128,H] → [128,1536]",
+          "主流 425 · MIX_AIC"
+        ],
+        "description": "本部署在 AG/F 完成后先算 G，再执行 QKV 输入量化与投影。",
+        "source": "ops/kimi_kda.py",
+        "records": [
+          {
+            "row": 66,
+            "type": "MatMulV3",
+            "stream": "425",
+            "core": "MIX_AIC",
+            "duration": 24.619,
+            "output": "128,1536",
+            "start_us": 22.788
+          }
+        ],
+        "status": "22.788–47.407 μs · s425",
+        "engine": "MIX_AIC",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 390,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "quant",
+        "title": "QKV input MX quant",
+        "col": 2,
+        "row": 3,
+        "kind": "op",
+        "lines": [
+          "[128,7168] → FP8 + scale",
+          "主流 425 · MIX_AIV"
+        ],
+        "description": "与辅助流 beta BF16、提前返回的 G 通信有交集。",
+        "source": "ops/kimi_kda.py",
+        "records": [
+          {
+            "row": 67,
+            "type": "DynamicMxQuant",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 5.927,
+            "output": "128,7168;128,112,2",
+            "start_us": 47.527
+          }
+        ],
+        "status": "47.527–53.454 μs · s425",
+        "engine": "MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 540,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "beta",
+        "title": "beta BF16 GEMM",
+        "col": 1,
+        "row": 3,
+        "kind": "op",
+        "lines": [
+          "[128,H] → [128,12]",
+          "辅助流 422 · MIX_AIC"
+        ],
+        "description": "beta 原始 BF16 与 QKV 合并通信；接收后才 float/sigmoid。",
+        "source": "ops/kimi_kda.py",
+        "records": [
+          {
+            "row": 68,
+            "type": "MatMulV3",
+            "stream": "422",
+            "core": "MIX_AIC",
+            "duration": 13.719,
+            "output": "128,12",
+            "start_us": 48.283
+          }
+        ],
+        "status": "48.283–62.002 μs · s422",
+        "engine": "MIX_AIC",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 540,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "gr",
+        "title": "G A2A（提前返回）",
+        "col": 3,
+        "row": 3,
+        "kind": "comm",
+        "lines": [
+          "[128,1536] → owner G",
+          "此时尚未进入 Recurrent"
+        ],
+        "description": "本 capture 的 690 层样本中，它与 Recurrent 的交集均为 0；不能再计算一次隐藏收益。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 69,
+            "type": "hcom_alltoall_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 9.013,
+            "output": "N/A",
+            "start_us": 48.956
+          }
+        ],
+        "status": "48.956–57.969 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 540,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "q",
+        "title": "QKV MXFP GEMM",
+        "col": 1,
+        "row": 4,
+        "kind": "op",
+        "lines": [
+          "[128,H] → [128,4608]",
+          "主流 425 · AI_CORE"
+        ],
+        "description": "等 MX quant 与 beta Cube 完成。没有 beta/G 后处理与此 GEMM 的实际重叠。",
+        "source": "ops/kimi_kda.py",
+        "records": [
+          {
+            "row": 70,
+            "type": "QuantBatchMatmulV3",
+            "stream": "425",
+            "core": "AI_CORE",
+            "duration": 23.776,
+            "output": "1,128,4608",
+            "start_us": 62.654
+          }
+        ],
+        "status": "62.654–86.430 μs · s425",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 690,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "cat",
+        "title": "Concat QKV + raw beta",
+        "col": 2,
+        "row": 5,
+        "kind": "op",
+        "lines": [
+          "4608 + 12 → 4620",
+          "实际有发送端 copy"
+        ],
+        "description": "输出 [128,4620]；两者不是独立的 beta/QKV 消息。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 71,
+            "type": "ConcatD",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 5.994,
+            "output": "128,4620",
+            "start_us": 86.452
+          }
+        ],
+        "status": "86.452–92.446 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 840,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "zero",
+        "title": "ZerosLike",
+        "col": 2,
+        "row": 6,
+        "kind": "op",
+        "lines": [
+          "初始化 owner core 输出",
+          "与返回通信局部相交"
+        ],
+        "description": "独立初始化，不读取 QKV 接收结果。",
+        "source": "ops/kimi_kda.py",
+        "records": [
+          {
+            "row": 72,
+            "type": "ZerosLike",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 4.219,
+            "output": "1,16,96,128",
+            "start_us": 92.517
+          }
+        ],
+        "status": "92.517–96.736 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 990,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "ret",
+        "title": "QKV + beta 合并 A2A",
+        "col": 3,
+        "row": 6,
+        "kind": "comm",
+        "lines": [
+          "[128,4620] BF16",
+          "一笔 all_to_all_single"
+        ],
+        "description": "一笔消息同时携带 QKV 与 raw beta；G GEMM 此时已完成。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 73,
+            "type": "hcom_alltoall_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 10.491,
+            "output": "N/A",
+            "start_us": 93.995
+          }
+        ],
+        "status": "93.995–104.486 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 990,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "restore",
+        "title": "QKV 重排 / beta 后处理",
+        "col": 2,
+        "row": 7,
+        "kind": "op",
+        "lines": [
+          "AsStrided → Slice → Transpose",
+          "→ Cast FP32 → Sigmoid"
+        ],
+        "description": "接收后这些 device kernel 全在主流 425 串行执行，位于 Conv 之前。",
+        "source": "ops/kimi_kda.py",
+        "records": [
+          {
+            "row": 74,
+            "type": "AsStrided",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 6.458,
+            "output": "16,3,8,12,128",
+            "start_us": 105.505
+          },
+          {
+            "row": 75,
+            "type": "Slice",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.443,
+            "output": "8,16,12",
+            "start_us": 111.985
+          },
+          {
+            "row": 76,
+            "type": "Transpose",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 3.538,
+            "output": "16,8,12",
+            "start_us": 114.45
+          },
+          {
+            "row": 77,
+            "type": "Cast",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.951,
+            "output": "1,16,96",
+            "start_us": 118.01
+          },
+          {
+            "row": 78,
+            "type": "Sigmoid",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.819,
+            "output": "1,16,96",
+            "start_us": 119.983
+          }
+        ],
+        "status": "105.505–122.802 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1140,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "conv",
+        "title": "CausalConv1d",
+        "col": 2,
+        "row": 8,
+        "kind": "op",
+        "lines": [
+          "owner Q/K/V [16,36864]",
+          "主流 425 · MIX_AIV"
+        ],
+        "description": "读取并更新 owner conv state。",
+        "source": "ops/kimi_kda.py",
+        "records": [
+          {
+            "row": 79,
+            "type": "CausalConv1d",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 15.128,
+            "output": "16,36864",
+            "start_us": 122.824
+          }
+        ],
+        "status": "122.824–137.952 μs · s425",
+        "engine": "MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1290,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "state",
+        "title": "owner recurrent / conv state",
+        "col": 0,
+        "row": 9,
+        "kind": "cache",
+        "lines": [
+          "状态不按 localTP 再切",
+          "缓存数据，不是计算引擎"
+        ],
+        "description": "Recurrent 内部读写状态；不将缓冲区画成可重叠算子。",
+        "source": "ops/kimi_kda.py",
+        "records": [],
+        "status": "源码依赖 / 数据归属",
+        "engine": "",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "source",
+        "x": 36,
+        "y": 1440,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      },
+      {
+        "id": "core",
+        "title": "RecurrentKDA",
+        "col": 2,
+        "row": 9,
+        "kind": "op",
+        "lines": [
+          "等 conv QKV + F + sigmoid beta",
+          "主流 425 · AI_VECTOR_CORE"
+        ],
+        "description": "完整 owner heads 参与状态递推，G 返回此时早已完成。",
+        "source": "ops/kimi_kda.py",
+        "records": [
+          {
+            "row": 80,
+            "type": "RecurrentKda",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 62.927,
+            "output": "196608;1313886208;1313886208",
+            "start_us": 137.974
+          }
+        ],
+        "status": "137.974–200.901 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1440,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "grestore",
+        "title": "G owner Transpose",
+        "col": 2,
+        "row": 10,
+        "kind": "op",
+        "lines": [
+          "[8,16,12,128]",
+          "→ [16,8,12,128]"
+        ],
+        "description": "实际到 Recurrent 后才在主流物化；未提前到 QKV Cube 窗口。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 81,
+            "type": "Transpose",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 7.184,
+            "output": "16,8,12,128",
+            "start_us": 200.971
+          }
+        ],
+        "status": "200.971–208.155 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1590,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "norm",
+        "title": "Gated RMSNorm",
+        "col": 2,
+        "row": 11,
+        "kind": "op",
+        "lines": [
+          "core × owner G",
+          "逐 head_dim=128 归一化"
+        ],
+        "description": "等待 core 与 G owner 重排。",
+        "source": "ops/kimi_kda.py",
+        "records": [
+          {
+            "row": 82,
+            "type": "layer_norm_gated_fwd_kernel",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 5.21,
+            "output": "N/A",
+            "start_us": 208.177
+          }
+        ],
+        "status": "208.177–213.387 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1740,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "olayout",
+        "title": "O 发送布局 Transpose",
+        "col": 2,
+        "row": 12,
+        "kind": "op",
+        "lines": [
+          "[16,8,1536] → [8,16,1536]",
+          "实际 device copy"
+        ],
+        "description": "位于 gated norm 后，随后才能发 output heads A2A。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 83,
+            "type": "Transpose",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 5.485,
+            "output": "8,16,1536",
+            "start_us": 213.409
+          }
+        ],
+        "status": "213.409–218.894 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1890,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "oa",
+        "title": "O heads A2A",
+        "col": 3,
+        "row": 13,
+        "kind": "comm",
+        "lines": [
+          "owner heads → [128,1536]",
+          "完整 head 保持成组"
+        ],
+        "description": "给按输入 head 维切分的 O 权重。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 84,
+            "type": "hcom_alltoall_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 9.35,
+            "output": "N/A",
+            "start_us": 219.722
+          }
+        ],
+        "status": "219.722–229.072 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 2040,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "o",
+        "title": "O BF16 GEMM",
+        "col": 1,
+        "row": 14,
+        "kind": "op",
+        "lines": [
+          "[128,1536] × W_O shard",
+          "partial [128,7168]"
+        ],
+        "description": "这是各 head shard 的 hidden 部分和。",
+        "source": "ops/linear_op.py",
+        "records": [
+          {
+            "row": 85,
+            "type": "MatMulV3",
+            "stream": "425",
+            "core": "AI_CORE",
+            "duration": 26.082,
+            "output": "128,7168",
+            "start_us": 229.867
+          }
+        ],
+        "status": "229.867–255.949 μs · s425",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 2190,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "rs",
+        "title": "O output RS",
+        "col": 3,
+        "row": 15,
+        "kind": "comm",
+        "lines": [
+          "sum → owner [16,7168]",
+          "同 chunk 必须等待 O GEMM"
+        ],
+        "description": "O A2A→GEMM→RS 在实测里仍为串行尾部。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 86,
+            "type": "hcom_reduceScatter_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 28.344,
+            "output": "N/A",
+            "start_us": 256.866
+          }
+        ],
+        "status": "256.866–285.210 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 2340,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "out",
+        "title": "返回 owner / 下一模块",
+        "col": 0,
+        "row": 16,
+        "kind": "op",
+        "lines": [
+          "[16,7168] · 保留 token 顺序",
+          "完成 join 后才可消费"
+        ],
+        "description": "这是返回结果的依赖边界，不额外假造一个 device kernel。",
+        "source": "ops/finegrained_tp.py",
+        "records": [],
+        "status": "源码依赖 / 数据归属",
+        "engine": "",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "source",
+        "x": 36,
+        "y": 2490,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      }
+    ],
+    "edges": [
+      {
+        "id": "p0",
+        "src": "rs",
+        "dst": "out",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 2386
+          },
+          {
+            "x": 296,
+            "y": 2386
+          },
+          {
+            "x": 296,
+            "y": 2543
+          },
+          {
+            "x": 278,
+            "y": 2543
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p1",
+        "src": "in",
+        "dst": "f",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 136
+          },
+          {
+            "x": 296,
+            "y": 136
+          },
+          {
+            "x": 296,
+            "y": 293
+          },
+          {
+            "x": 336,
+            "y": 293
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p2",
+        "src": "in",
+        "dst": "ag",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 150
+          },
+          {
+            "x": 918,
+            "y": 150
+          },
+          {
+            "x": 918,
+            "y": 279
+          },
+          {
+            "x": 936,
+            "y": 279
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p3",
+        "src": "ag",
+        "dst": "g",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 293
+          },
+          {
+            "x": 596,
+            "y": 293
+          },
+          {
+            "x": 596,
+            "y": 429
+          },
+          {
+            "x": 578,
+            "y": 429
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p4",
+        "src": "f",
+        "dst": "g",
+        "label": "源码等待 F_b / Cube 次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 457,
+            "y": 346
+          },
+          {
+            "x": 457,
+            "y": 390
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p5",
+        "src": "g",
+        "dst": "gr",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 443
+          },
+          {
+            "x": 918,
+            "y": 443
+          },
+          {
+            "x": 918,
+            "y": 586
+          },
+          {
+            "x": 936,
+            "y": 586
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p6",
+        "src": "g",
+        "dst": "quant",
+        "label": "主流次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 578,
+            "y": 457
+          },
+          {
+            "x": 596,
+            "y": 457
+          },
+          {
+            "x": 596,
+            "y": 586
+          },
+          {
+            "x": 636,
+            "y": 586
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p7",
+        "src": "ag",
+        "dst": "beta",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 307
+          },
+          {
+            "x": 600,
+            "y": 307
+          },
+          {
+            "x": 600,
+            "y": 586
+          },
+          {
+            "x": 578,
+            "y": 586
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p8",
+        "src": "g",
+        "dst": "beta",
+        "label": "本部署 Cube 次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 457,
+            "y": 496
+          },
+          {
+            "x": 457,
+            "y": 540
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p9",
+        "src": "quant",
+        "dst": "q",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 600
+          },
+          {
+            "x": 618,
+            "y": 600
+          },
+          {
+            "x": 618,
+            "y": 736
+          },
+          {
+            "x": 578,
+            "y": 736
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p10",
+        "src": "beta",
+        "dst": "q",
+        "label": "显式 wait beta",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 457,
+            "y": 646
+          },
+          {
+            "x": 457,
+            "y": 690
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p11",
+        "src": "q",
+        "dst": "cat",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 750
+          },
+          {
+            "x": 618,
+            "y": 750
+          },
+          {
+            "x": 618,
+            "y": 886
+          },
+          {
+            "x": 636,
+            "y": 886
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p12",
+        "src": "beta",
+        "dst": "cat",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 600
+          },
+          {
+            "x": 596,
+            "y": 600
+          },
+          {
+            "x": 596,
+            "y": 900
+          },
+          {
+            "x": 636,
+            "y": 900
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p13",
+        "src": "cat",
+        "dst": "zero",
+        "label": "主流次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 757,
+            "y": 946
+          },
+          {
+            "x": 757,
+            "y": 990
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p14",
+        "src": "cat",
+        "dst": "ret",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 878,
+            "y": 893
+          },
+          {
+            "x": 918,
+            "y": 893
+          },
+          {
+            "x": 918,
+            "y": 1036
+          },
+          {
+            "x": 936,
+            "y": 1036
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p15",
+        "src": "ret",
+        "dst": "restore",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 1050
+          },
+          {
+            "x": 918,
+            "y": 1050
+          },
+          {
+            "x": 918,
+            "y": 1193
+          },
+          {
+            "x": 878,
+            "y": 1193
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p16",
+        "src": "zero",
+        "dst": "restore",
+        "label": "主流次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 750,
+            "y": 1096
+          },
+          {
+            "x": 750,
+            "y": 1114
+          },
+          {
+            "x": 757,
+            "y": 1114
+          },
+          {
+            "x": 757,
+            "y": 1140
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p17",
+        "src": "restore",
+        "dst": "conv",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 757,
+            "y": 1246
+          },
+          {
+            "x": 757,
+            "y": 1290
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p18",
+        "src": "conv",
+        "dst": "core",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 757,
+            "y": 1396
+          },
+          {
+            "x": 757,
+            "y": 1414
+          },
+          {
+            "x": 750,
+            "y": 1414
+          },
+          {
+            "x": 750,
+            "y": 1440
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p19",
+        "src": "core",
+        "dst": "grestore",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 750,
+            "y": 1546
+          },
+          {
+            "x": 750,
+            "y": 1564
+          },
+          {
+            "x": 757,
+            "y": 1564
+          },
+          {
+            "x": 757,
+            "y": 1590
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p20",
+        "src": "grestore",
+        "dst": "norm",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 757,
+            "y": 1696
+          },
+          {
+            "x": 757,
+            "y": 1714
+          },
+          {
+            "x": 750,
+            "y": 1714
+          },
+          {
+            "x": 750,
+            "y": 1740
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p21",
+        "src": "norm",
+        "dst": "olayout",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 757,
+            "y": 1846
+          },
+          {
+            "x": 757,
+            "y": 1890
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p22",
+        "src": "olayout",
+        "dst": "oa",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 878,
+            "y": 1943
+          },
+          {
+            "x": 918,
+            "y": 1943
+          },
+          {
+            "x": 918,
+            "y": 2086
+          },
+          {
+            "x": 936,
+            "y": 2086
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p23",
+        "src": "oa",
+        "dst": "o",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 2100
+          },
+          {
+            "x": 596,
+            "y": 2100
+          },
+          {
+            "x": 596,
+            "y": 2236
+          },
+          {
+            "x": 578,
+            "y": 2236
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p24",
+        "src": "o",
+        "dst": "rs",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 2250
+          },
+          {
+            "x": 918,
+            "y": 2250
+          },
+          {
+            "x": 918,
+            "y": 2400
+          },
+          {
+            "x": 936,
+            "y": 2400
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p25",
+        "src": "f",
+        "dst": "core",
+        "label": "owner raw F",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 293
+          },
+          {
+            "x": 614,
+            "y": 293
+          },
+          {
+            "x": 614,
+            "y": 1486
+          },
+          {
+            "x": 636,
+            "y": 1486
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p26",
+        "src": "state",
+        "dst": "core",
+        "label": "读写状态",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 1493
+          },
+          {
+            "x": 618,
+            "y": 1493
+          },
+          {
+            "x": 618,
+            "y": 1500
+          },
+          {
+            "x": 636,
+            "y": 1500
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p27",
+        "src": "zero",
+        "dst": "core",
+        "label": "输出 buffer ready",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 764,
+            "y": 1096
+          },
+          {
+            "x": 764,
+            "y": 1122
+          },
+          {
+            "x": 896,
+            "y": 1122
+          },
+          {
+            "x": 896,
+            "y": 1422
+          },
+          {
+            "x": 764,
+            "y": 1422
+          },
+          {
+            "x": 764,
+            "y": 1440
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p28",
+        "src": "gr",
+        "dst": "grestore",
+        "label": "已返回的 G",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 600
+          },
+          {
+            "x": 918,
+            "y": 600
+          },
+          {
+            "x": 918,
+            "y": 900
+          },
+          {
+            "x": 900,
+            "y": 900
+          },
+          {
+            "x": 900,
+            "y": 1643
+          },
+          {
+            "x": 878,
+            "y": 1643
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p29",
+        "src": "core",
+        "dst": "norm",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 764,
+            "y": 1546
+          },
+          {
+            "x": 764,
+            "y": 1572
+          },
+          {
+            "x": 896,
+            "y": 1572
+          },
+          {
+            "x": 896,
+            "y": 1722
+          },
+          {
+            "x": 764,
+            "y": 1722
+          },
+          {
+            "x": 764,
+            "y": 1740
+          }
+        ],
+        "backedge": false
+      }
+    ],
+    "parallelGroups": [
+      {
+        "id": "ag:f",
+        "color": "#71dac8",
+        "title": "交集中位 13.472 μs",
+        "parts": [
+          [
+            "ag"
+          ],
+          [
+            "f"
+          ]
+        ]
+      },
+      {
+        "id": "quant:beta",
+        "color": "#efc978",
+        "title": "交集中位 4.519 μs",
+        "parts": [
+          [
+            "quant"
+          ],
+          [
+            "beta"
+          ]
+        ]
+      },
+      {
+        "id": "ret:zero",
+        "color": "#a996ee",
+        "title": "交集中位 2.862 μs",
+        "parts": [
+          [
+            "ret"
+          ],
+          [
+            "zero"
+          ]
+        ]
+      }
+    ],
+    "windows": [
+      [
+        "G 返回与 Recurrent 的实际位置",
+        "690 个 KDA 样本的交集 min/median/max 均为 0；G A2A 实际位于 MX quant / beta BF16 附近。"
+      ],
+      [
+        "接收后的主流处理",
+        "QKV/beta 合并返回 → QKV owner 重排 → beta Slice/Transpose/Cast/Sigmoid → Conv → Recurrent。beta 后处理位于 Conv 之前。"
+      ]
+    ],
+    "stages": [
+      {
+        "title": "输入 / 缓存（非引擎）",
+        "index": 0,
+        "x": 20,
+        "y": 18,
+        "w": 270,
+        "h": 2618
+      },
+      {
+        "title": "Cube / MIX_AIC",
+        "index": 1,
+        "x": 320,
+        "y": 18,
+        "w": 270,
+        "h": 2618
+      },
+      {
+        "title": "Vector / MIX_AIV",
+        "index": 2,
+        "x": 620,
+        "y": 18,
+        "w": 270,
+        "h": 2618
+      },
+      {
+        "title": "Communication",
+        "index": 3,
+        "x": 920,
+        "y": 18,
+        "w": 270,
+        "h": 2618
+      }
+    ],
+    "resourceLanes": true,
+    "observed": true,
+    "family": "kda",
+    "width": 1200,
+    "height": 2654
+  },
+  "dsa": {
+    "nodes": [
+      {
+        "id": "in",
+        "title": "DSA AttnRes 输入",
+        "col": 0,
+        "row": 0,
+        "kind": "op",
+        "lines": [
+          "owner [16,7168]",
+          "TP1 / DCP1"
+        ],
+        "description": "实际 pure DP localTP；没有 DCP query/candidate/output 归并。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 214,
+            "type": "AttnResFwd",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 8.603,
+            "output": "114688;114688;114688",
+            "start_us": 0
+          }
+        ],
+        "status": "0.000–8.603 μs · s425",
+        "engine": "MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 36,
+        "y": 90,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      },
+      {
+        "id": "ag",
+        "title": "G input AG",
+        "col": 3,
+        "row": 1,
+        "kind": "comm",
+        "lines": [
+          "[16,H] → [128,H]",
+          "与实际 MLA prolog 相交"
+        ],
+        "description": "这是 localTP G 输入，不是 DCP query heads AG。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 216,
+            "type": "hcom_allGather_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 18.862,
+            "output": "N/A",
+            "start_us": 10.954
+          }
+        ],
+        "status": "10.954–29.816 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 240,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "quant",
+        "title": "MLA input MX quant",
+        "col": 2,
+        "row": 1,
+        "kind": "op",
+        "lines": [
+          "owner [16,7168]",
+          "主流 425"
+        ],
+        "description": "先量化后进入 fused MLA prolog。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 217,
+            "type": "DynamicMxQuant",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 4.398,
+            "output": "16,7168;16,112,2",
+            "start_us": 11.518
+          }
+        ],
+        "status": "11.518–15.916 μs · s425",
+        "engine": "MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 240,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "prolog",
+        "title": "MlaPrologV3",
+        "col": 1,
+        "row": 2,
+        "kind": "op",
+        "lines": [
+          "owner Q / KV / UK 准备",
+          "主流 425 · MIX_AIC"
+        ],
+        "description": "本节点同时使用 Cube/Vector；不将整段标成纯 Vector。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 218,
+            "type": "MlaPrologV3",
+            "stream": "425",
+            "core": "MIX_AIC",
+            "duration": 50.495,
+            "output": "16,96,512;16,96,64;7104,128,1,656;;;16,1536;16,48",
+            "start_us": 15.938
+          }
+        ],
+        "status": "15.938–66.433 μs · s425",
+        "engine": "MIX_AIC",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 390,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "g",
+        "title": "G BF16 GEMM",
+        "col": 1,
+        "row": 3,
+        "kind": "op",
+        "lines": [
+          "[128,H] → [128,1536]",
+          "主流 425"
+        ],
+        "description": "实际在 prolog 后、index K/weights 投影前执行。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 219,
+            "type": "MatMulV3",
+            "stream": "425",
+            "core": "MIX_AIC",
+            "duration": 28.585,
+            "output": "128,1536",
+            "start_us": 66.503
+          }
+        ],
+        "status": "66.503–95.088 μs · s425",
+        "engine": "MIX_AIC",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 540,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "keyproj",
+        "title": "Indexer K / weights 投影",
+        "col": 1,
+        "row": 4,
+        "kind": "op",
+        "lines": [
+          "[16,H] → [16,160]",
+          "128 key + 32 weights"
+        ],
+        "description": "与 G 返回有真实部分交集。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 220,
+            "type": "MatMulV3",
+            "stream": "425",
+            "core": "MIX_AIC",
+            "duration": 7.9,
+            "output": "16,160",
+            "start_us": 95.159
+          }
+        ],
+        "status": "95.159–103.059 μs · s425",
+        "engine": "MIX_AIC",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 690,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "gr",
+        "title": "G A2A（提前返回）",
+        "col": 3,
+        "row": 4,
+        "kind": "comm",
+        "lines": [
+          "返回 owner [16,12288]",
+          "不等 Indexer/SFA 完成"
+        ],
+        "description": "240 个 DSA 样本中，与 Indexer 的交集均为 0。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 221,
+            "type": "hcom_alltoall_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 8.14,
+            "output": "N/A",
+            "start_us": 96.707
+          }
+        ],
+        "status": "96.707–104.847 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 690,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "qprep",
+        "title": "Indexer Q 准备",
+        "col": 1,
+        "row": 5,
+        "kind": "op",
+        "lines": [
+          "QMM → MatMul → MatMul",
+          "辅助流 417 · AI_CORE"
+        ],
+        "description": "实际辅助流 Q 投影，与主流 key norm/quant 有交集。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 223,
+            "type": "QuantBatchMatmulV3",
+            "stream": "417",
+            "core": "AI_CORE",
+            "duration": 6.452,
+            "output": "16,4096",
+            "start_us": 104.022
+          },
+          {
+            "row": 226,
+            "type": "MatMulV3",
+            "stream": "417",
+            "core": "AI_CORE",
+            "duration": 4.527,
+            "output": "512,128",
+            "start_us": 110.496
+          },
+          {
+            "row": 229,
+            "type": "MatMulV3",
+            "stream": "417",
+            "core": "AI_CORE",
+            "duration": 2.364,
+            "output": "16,128",
+            "start_us": 117.112
+          }
+        ],
+        "status": "104.022–119.476 μs · s417",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 840,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "kprep",
+        "title": "Indexer K / weights 准备",
+        "col": 2,
+        "row": 5,
+        "kind": "op",
+        "lines": [
+          "Slice / norm / cast / quant",
+          "主流 425 · Vector/MIX_AIV"
+        ],
+        "description": "含 cache write；不是整条 DSA 都可与 G Cube 并行。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 222,
+            "type": "Slice",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.557,
+            "output": "16,128",
+            "start_us": 103.13
+          },
+          {
+            "row": 224,
+            "type": "Cast",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 3.507,
+            "output": "16,128",
+            "start_us": 105.709
+          },
+          {
+            "row": 225,
+            "type": "LayerNormV4",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 4.686,
+            "output": "16,128;16,1;16,1",
+            "start_us": 109.238
+          },
+          {
+            "row": 227,
+            "type": "Cast",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.146,
+            "output": "16,128",
+            "start_us": 113.946
+          },
+          {
+            "row": 228,
+            "type": "DynamicQuantV2",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 5.719,
+            "output": "512,128;512;512",
+            "start_us": 116.211
+          },
+          {
+            "row": 230,
+            "type": "IndexerQuantCache",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 4.074,
+            "output": "3824680960;2029907968",
+            "start_us": 122
+          },
+          {
+            "row": 231,
+            "type": "Slice",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.123,
+            "output": "16,32",
+            "start_us": 126.096
+          }
+        ],
+        "status": "103.130–128.219 μs · s425",
+        "engine": "AI_VECTOR_CORE / MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 840,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "idx",
+        "title": "QuantLightningIndexer",
+        "col": 1,
+        "row": 6,
+        "kind": "op",
+        "lines": [
+          "owner Q/K/weights → top-k",
+          "MIX_AIC · 非纯 Vector"
+        ],
+        "description": "等 Q aux 与 K/weights main 两条准备分支。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 232,
+            "type": "QuantLightningIndexer",
+            "stream": "425",
+            "core": "MIX_AIC",
+            "duration": 221.947,
+            "output": "16,1,2048",
+            "start_us": 128.241
+          }
+        ],
+        "status": "128.241–350.188 μs · s425",
+        "engine": "MIX_AIC",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 990,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "cache",
+        "title": "owner compressed KV / index cache",
+        "col": 0,
+        "row": 6,
+        "kind": "cache",
+        "lines": [
+          "localTP 不切历史状态",
+          "由 prolog / K prep 写入"
+        ],
+        "description": "数据缓冲，不占一个独立“计算窗口”。",
+        "source": "attention/sfa_v1.py",
+        "records": [],
+        "status": "源码依赖 / 数据归属",
+        "engine": "",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "source",
+        "x": 36,
+        "y": 990,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      },
+      {
+        "id": "concat",
+        "title": "Q nope / rope Concat",
+        "col": 2,
+        "row": 7,
+        "kind": "op",
+        "lines": [
+          "[16,96,512] + [16,96,64]",
+          "→ [16,96,576]"
+        ],
+        "description": "实测有设备执行，不按 view 忽略。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 233,
+            "type": "ConcatD",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 5.859,
+            "output": "16,96,576",
+            "start_us": 350.21
+          }
+        ],
+        "status": "350.210–356.069 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1140,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "sfa",
+        "title": "Quant Sparse Attention",
+        "col": 1,
+        "row": 8,
+        "kind": "op",
+        "lines": [
+          "top-k + owner KV",
+          "MIX_AIC"
+        ],
+        "description": "不是 DCP attention，也没有其 output A2A/LSE combine。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 234,
+            "type": "KvQuantSparseFlashAttentionVllm",
+            "stream": "425",
+            "core": "MIX_AIC",
+            "duration": 60.915,
+            "output": "16,96,512;1,16,96;1,16,96",
+            "start_us": 356.091
+          }
+        ],
+        "status": "356.091–417.006 μs · s425",
+        "engine": "MIX_AIC",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 1290,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "uv",
+        "title": "UV up projection",
+        "col": 1,
+        "row": 9,
+        "kind": "op",
+        "lines": [
+          "[16,96,512] → [16,96,128]",
+          "TransposeBatchMatMul · AI_CORE"
+        ],
+        "description": "UV 与 G 都占 Cube，实测按队列执行。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 235,
+            "type": "TransposeBatchMatMul",
+            "stream": "425",
+            "core": "AI_CORE",
+            "duration": 11.417,
+            "output": "16,96,128",
+            "start_us": 417.028
+          }
+        ],
+        "status": "417.028–428.445 μs · s425",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 1440,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "grestore",
+        "title": "G owner Transpose",
+        "col": 2,
+        "row": 10,
+        "kind": "op",
+        "lines": [
+          "[8,16,12,128] → owner heads",
+          "主流 425"
+        ],
+        "description": "实际位于 UV 后，G 接收已提前完成。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 236,
+            "type": "Transpose",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 7.171,
+            "output": "16,8,12,128",
+            "start_us": 428.515
+          }
+        ],
+        "status": "428.515–435.686 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1590,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "gate",
+        "title": "sigmoid(G) × UV output",
+        "col": 2,
+        "row": 11,
+        "kind": "op",
+        "lines": [
+          "owner [16,12288]",
+          "Vector gate kernel"
+        ],
+        "description": "仍在 owner gate 后才分发 O heads；不是 G/O co-location 候选。",
+        "source": "attention/sfa_v1.py",
+        "records": [
+          {
+            "row": 237,
+            "type": "_flash_attention_gate_kernel",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 3.949,
+            "output": "N/A",
+            "start_us": 435.708
+          }
+        ],
+        "status": "435.708–439.657 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1740,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "olayout",
+        "title": "O 发送布局 Transpose",
+        "col": 2,
+        "row": 12,
+        "kind": "op",
+        "lines": [
+          "[16,8,1536] → peer-major",
+          "主流 425"
+        ],
+        "description": "随后发 O heads A2A。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 238,
+            "type": "Transpose",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 5.582,
+            "output": "8,16,1536",
+            "start_us": 440.294
+          }
+        ],
+        "status": "440.294–445.876 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1890,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "oa",
+        "title": "O heads A2A",
+        "col": 3,
+        "row": 13,
+        "kind": "comm",
+        "lines": [
+          "→ [128,1536]",
+          "localTP8"
+        ],
+        "description": "这是 O 输入交换，不是旧 DCP output/LSE 归并。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 239,
+            "type": "hcom_alltoall_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 8.337,
+            "output": "N/A",
+            "start_us": 446.656
+          }
+        ],
+        "status": "446.656–454.993 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 2040,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "o",
+        "title": "O BF16 GEMM",
+        "col": 1,
+        "row": 14,
+        "kind": "op",
+        "lines": [
+          "→ partial [128,7168]",
+          "AI_CORE"
+        ],
+        "description": "按输入 head shard 计算部分和。",
+        "source": "ops/linear_op.py",
+        "records": [
+          {
+            "row": 240,
+            "type": "MatMulV3",
+            "stream": "425",
+            "core": "AI_CORE",
+            "duration": 22.521,
+            "output": "128,7168",
+            "start_us": 455.805
+          }
+        ],
+        "status": "455.805–478.326 μs · s425",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 2190,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "rs",
+        "title": "O output RS",
+        "col": 3,
+        "row": 15,
+        "kind": "comm",
+        "lines": [
+          "→ owner [16,7168]",
+          "sum + owner rows"
+        ],
+        "description": "等待本 chunk 的 O GEMM。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 241,
+            "type": "hcom_reduceScatter_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 24.775,
+            "output": "N/A",
+            "start_us": 479.13
+          }
+        ],
+        "status": "479.130–503.905 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 2340,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "out",
+        "title": "返回 owner / 下一模块",
+        "col": 0,
+        "row": 16,
+        "kind": "op",
+        "lines": [
+          "[16,7168] · 保留 token 顺序",
+          "完成 join 后才可消费"
+        ],
+        "description": "这是返回结果的依赖边界，不额外假造一个 device kernel。",
+        "source": "ops/finegrained_tp.py",
+        "records": [],
+        "status": "源码依赖 / 数据归属",
+        "engine": "",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "source",
+        "x": 36,
+        "y": 2490,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      }
+    ],
+    "edges": [
+      {
+        "id": "p0",
+        "src": "rs",
+        "dst": "out",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 2386
+          },
+          {
+            "x": 296,
+            "y": 2386
+          },
+          {
+            "x": 296,
+            "y": 2543
+          },
+          {
+            "x": 278,
+            "y": 2543
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p1",
+        "src": "in",
+        "dst": "ag",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 136
+          },
+          {
+            "x": 918,
+            "y": 136
+          },
+          {
+            "x": 918,
+            "y": 286
+          },
+          {
+            "x": 936,
+            "y": 286
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p2",
+        "src": "in",
+        "dst": "quant",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 150
+          },
+          {
+            "x": 618,
+            "y": 150
+          },
+          {
+            "x": 618,
+            "y": 286
+          },
+          {
+            "x": 636,
+            "y": 286
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p3",
+        "src": "quant",
+        "dst": "prolog",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 300
+          },
+          {
+            "x": 596,
+            "y": 300
+          },
+          {
+            "x": 596,
+            "y": 436
+          },
+          {
+            "x": 578,
+            "y": 436
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p4",
+        "src": "prolog",
+        "dst": "g",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 450,
+            "y": 496
+          },
+          {
+            "x": 450,
+            "y": 514
+          },
+          {
+            "x": 457,
+            "y": 514
+          },
+          {
+            "x": 457,
+            "y": 540
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p5",
+        "src": "g",
+        "dst": "keyproj",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 457,
+            "y": 646
+          },
+          {
+            "x": 457,
+            "y": 690
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p6",
+        "src": "ag",
+        "dst": "g",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 300
+          },
+          {
+            "x": 918,
+            "y": 300
+          },
+          {
+            "x": 918,
+            "y": 586
+          },
+          {
+            "x": 578,
+            "y": 586
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p7",
+        "src": "g",
+        "dst": "gr",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 600
+          },
+          {
+            "x": 918,
+            "y": 600
+          },
+          {
+            "x": 918,
+            "y": 736
+          },
+          {
+            "x": 936,
+            "y": 736
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p8",
+        "src": "prolog",
+        "dst": "qprep",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 464,
+            "y": 496
+          },
+          {
+            "x": 464,
+            "y": 522
+          },
+          {
+            "x": 596,
+            "y": 522
+          },
+          {
+            "x": 596,
+            "y": 822
+          },
+          {
+            "x": 457,
+            "y": 822
+          },
+          {
+            "x": 457,
+            "y": 840
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p9",
+        "src": "keyproj",
+        "dst": "kprep",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 743
+          },
+          {
+            "x": 618,
+            "y": 743
+          },
+          {
+            "x": 618,
+            "y": 879
+          },
+          {
+            "x": 636,
+            "y": 879
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p10",
+        "src": "qprep",
+        "dst": "idx",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 457,
+            "y": 946
+          },
+          {
+            "x": 457,
+            "y": 990
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p11",
+        "src": "kprep",
+        "dst": "idx",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 893
+          },
+          {
+            "x": 596,
+            "y": 893
+          },
+          {
+            "x": 596,
+            "y": 1036
+          },
+          {
+            "x": 578,
+            "y": 1036
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p12",
+        "src": "prolog",
+        "dst": "cache",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 336,
+            "y": 443
+          },
+          {
+            "x": 318,
+            "y": 443
+          },
+          {
+            "x": 318,
+            "y": 1029
+          },
+          {
+            "x": 278,
+            "y": 1029
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p13",
+        "src": "kprep",
+        "dst": "cache",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 907
+          },
+          {
+            "x": 600,
+            "y": 907
+          },
+          {
+            "x": 600,
+            "y": 972
+          },
+          {
+            "x": 296,
+            "y": 972
+          },
+          {
+            "x": 296,
+            "y": 1043
+          },
+          {
+            "x": 278,
+            "y": 1043
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p14",
+        "src": "prolog",
+        "dst": "concat",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 450
+          },
+          {
+            "x": 596,
+            "y": 450
+          },
+          {
+            "x": 596,
+            "y": 522
+          },
+          {
+            "x": 614,
+            "y": 522
+          },
+          {
+            "x": 614,
+            "y": 1179
+          },
+          {
+            "x": 636,
+            "y": 1179
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p15",
+        "src": "idx",
+        "dst": "concat",
+        "label": "主流次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 578,
+            "y": 1050
+          },
+          {
+            "x": 618,
+            "y": 1050
+          },
+          {
+            "x": 618,
+            "y": 1193
+          },
+          {
+            "x": 636,
+            "y": 1193
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p16",
+        "src": "concat",
+        "dst": "sfa",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 1207
+          },
+          {
+            "x": 596,
+            "y": 1207
+          },
+          {
+            "x": 596,
+            "y": 1343
+          },
+          {
+            "x": 578,
+            "y": 1343
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p17",
+        "src": "sfa",
+        "dst": "uv",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 457,
+            "y": 1396
+          },
+          {
+            "x": 457,
+            "y": 1440
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p18",
+        "src": "uv",
+        "dst": "grestore",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 1486
+          },
+          {
+            "x": 618,
+            "y": 1486
+          },
+          {
+            "x": 618,
+            "y": 1643
+          },
+          {
+            "x": 636,
+            "y": 1643
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p19",
+        "src": "grestore",
+        "dst": "gate",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 757,
+            "y": 1696
+          },
+          {
+            "x": 757,
+            "y": 1740
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p20",
+        "src": "gate",
+        "dst": "olayout",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 757,
+            "y": 1846
+          },
+          {
+            "x": 757,
+            "y": 1890
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p21",
+        "src": "olayout",
+        "dst": "oa",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 878,
+            "y": 1943
+          },
+          {
+            "x": 918,
+            "y": 1943
+          },
+          {
+            "x": 918,
+            "y": 2086
+          },
+          {
+            "x": 936,
+            "y": 2086
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p22",
+        "src": "oa",
+        "dst": "o",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 2100
+          },
+          {
+            "x": 596,
+            "y": 2100
+          },
+          {
+            "x": 596,
+            "y": 2236
+          },
+          {
+            "x": 578,
+            "y": 2236
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p23",
+        "src": "o",
+        "dst": "rs",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 2250
+          },
+          {
+            "x": 918,
+            "y": 2250
+          },
+          {
+            "x": 918,
+            "y": 2400
+          },
+          {
+            "x": 936,
+            "y": 2400
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p24",
+        "src": "idx",
+        "dst": "sfa",
+        "label": "top-k",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 457,
+            "y": 1096
+          },
+          {
+            "x": 457,
+            "y": 1290
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p25",
+        "src": "cache",
+        "dst": "sfa",
+        "label": "KV read",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 1057
+          },
+          {
+            "x": 296,
+            "y": 1057
+          },
+          {
+            "x": 296,
+            "y": 1343
+          },
+          {
+            "x": 336,
+            "y": 1343
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p26",
+        "src": "gr",
+        "dst": "grestore",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 750
+          },
+          {
+            "x": 918,
+            "y": 750
+          },
+          {
+            "x": 918,
+            "y": 1643
+          },
+          {
+            "x": 878,
+            "y": 1643
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p27",
+        "src": "uv",
+        "dst": "gate",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 1500
+          },
+          {
+            "x": 596,
+            "y": 1500
+          },
+          {
+            "x": 596,
+            "y": 1793
+          },
+          {
+            "x": 636,
+            "y": 1793
+          }
+        ],
+        "backedge": false
+      }
+    ],
+    "parallelGroups": [
+      {
+        "id": "ag:prolog",
+        "color": "#71dac8",
+        "title": "交集中位 16.784 μs",
+        "parts": [
+          [
+            "ag"
+          ],
+          [
+            "prolog"
+          ]
+        ]
+      },
+      {
+        "id": "qprep:kprep",
+        "color": "#efc978",
+        "title": "交集中位 13.299 μs",
+        "parts": [
+          [
+            "qprep"
+          ],
+          [
+            "kprep"
+          ]
+        ]
+      }
+    ],
+    "windows": [
+      [
+        "G 投影与返回位置",
+        "G input AG 与 prolog 有交集；G return 与 Indexer/SFA 不构成实测覆盖窗口。本图采用 localTP 的设备样本。"
+      ]
+    ],
+    "stages": [
+      {
+        "title": "输入 / 缓存（非引擎）",
+        "index": 0,
+        "x": 20,
+        "y": 18,
+        "w": 270,
+        "h": 2618
+      },
+      {
+        "title": "Cube / MIX_AIC",
+        "index": 1,
+        "x": 320,
+        "y": 18,
+        "w": 270,
+        "h": 2618
+      },
+      {
+        "title": "Vector / MIX_AIV",
+        "index": 2,
+        "x": 620,
+        "y": 18,
+        "w": 270,
+        "h": 2618
+      },
+      {
+        "title": "Communication",
+        "index": 3,
+        "x": 920,
+        "y": 18,
+        "w": 270,
+        "h": 2618
+      }
+    ],
+    "resourceLanes": true,
+    "observed": true,
+    "family": "dsa",
+    "width": 1200,
+    "height": 2654
+  },
+  "shared": {
+    "nodes": [
+      {
+        "id": "in",
+        "title": "MoE AttnRes 输入",
+        "col": 0,
+        "row": 0,
+        "kind": "op",
+        "lines": [
+          "owner [16,7168]",
+          "shared 与 routed 起点"
+        ],
+        "description": "本图记录 3634a7e 部署的设备行为。",
+        "source": "ops/fused_moe/shared_experts.py",
+        "records": [
+          {
+            "row": 153,
+            "type": "AttnResFwd",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 9.63,
+            "output": "114688;114688;114688",
+            "start_us": 0
+          }
+        ],
+        "status": "0.000–9.630 μs · s425",
+        "engine": "MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 36,
+        "y": 90,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      },
+      {
+        "id": "router",
+        "title": "Router GEMM",
+        "col": 1,
+        "row": 1,
+        "kind": "op",
+        "lines": [
+          "[16,7168] → [16,896]",
+          "主流 425 · MIX_AIC"
+        ],
+        "description": "实际先产出 router logits。",
+        "source": "ops/fused_moe/shared_experts.py",
+        "records": [
+          {
+            "row": 154,
+            "type": "MatMulV3",
+            "stream": "425",
+            "core": "MIX_AIC",
+            "duration": 15.328,
+            "output": "16,896",
+            "start_us": 9.652
+          }
+        ],
+        "status": "9.652–24.980 μs · s425",
+        "engine": "MIX_AIC",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 240,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "ag",
+        "title": "Shared input AG",
+        "col": 3,
+        "row": 2,
+        "kind": "comm",
+        "lines": [
+          "[16,7168] → [128,7168]",
+          "localTP8"
+        ],
+        "description": "本 capture 先完成 AG，再运行 latent down；交集由设备时间区间确认。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 155,
+            "type": "hcom_allGather_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 13.275,
+            "output": "N/A",
+            "start_us": 25.932
+          }
+        ],
+        "status": "25.932–39.207 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 390,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "down_quant",
+        "title": "Latent down input MX quant",
+        "col": 2,
+        "row": 3,
+        "kind": "op",
+        "lines": [
+          "owner [16,7168]",
+          "主流 425"
+        ],
+        "description": "属于 routed 输入变换，不是 shared input quant。",
+        "source": "ops/fused_moe/shared_experts.py",
+        "records": [
+          {
+            "row": 156,
+            "type": "DynamicMxQuant",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 5.356,
+            "output": "16,7168;16,112,2",
+            "start_us": 40.103
+          }
+        ],
+        "status": "40.103–45.459 μs · s425",
+        "engine": "MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 540,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "latent_down",
+        "title": "Routed latent down GEMM",
+        "col": 1,
+        "row": 4,
+        "kind": "op",
+        "lines": [
+          "[16,7168] → [16,3584]",
+          "主流 425 · AI_CORE"
+        ],
+        "description": "本例未与 shared AG 重叠。",
+        "source": "ops/fused_moe/fused_moe.py",
+        "records": [
+          {
+            "row": 157,
+            "type": "QuantBatchMatmulV3",
+            "stream": "425",
+            "core": "AI_CORE",
+            "duration": 14.345,
+            "output": "16,3584",
+            "start_us": 45.481
+          }
+        ],
+        "status": "45.481–59.826 μs · s425",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 690,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "quant",
+        "title": "Shared input MX quant",
+        "col": 2,
+        "row": 5,
+        "kind": "op",
+        "lines": [
+          "[128,7168] → FP8 + scale",
+          "主流 425"
+        ],
+        "description": "两支的 token/hidden 维度不同，不能混为同一量化。",
+        "source": "ops/fused_moe/shared_experts.py",
+        "records": [
+          {
+            "row": 158,
+            "type": "DynamicMxQuant",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 5.377,
+            "output": "128,7168;128,112,2",
+            "start_us": 59.993
+          }
+        ],
+        "status": "59.993–65.370 μs · s425",
+        "engine": "MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 840,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "up",
+        "title": "Shared gate/up GEMM",
+        "col": 1,
+        "row": 6,
+        "kind": "op",
+        "lines": [
+          "[128,7168] → [128,1536]",
+          "主流 425 · MIX_AIC"
+        ],
+        "description": "按 intermediate 6144/8=768；gate/up 合并 1536 列。",
+        "source": "ops/fused_moe/shared_experts.py",
+        "records": [
+          {
+            "row": 159,
+            "type": "QuantBatchMatmulV3",
+            "stream": "425",
+            "core": "MIX_AIC",
+            "duration": 15.425,
+            "output": "128,1536",
+            "start_us": 65.44
+          }
+        ],
+        "status": "65.440–80.865 μs · s425",
+        "engine": "MIX_AIC",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 990,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "topk",
+        "title": "Routed TopK",
+        "col": 2,
+        "row": 7,
+        "kind": "op",
+        "lines": [
+          "[16,896] → [16,16]",
+          "主流 425"
+        ],
+        "description": "设备上排在 shared gate/up 之后。",
+        "source": "ops/fused_moe/shared_experts.py",
+        "records": [
+          {
+            "row": 160,
+            "type": "MoeGatingTopK",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 5.328,
+            "output": "16,16;16,16;16,896",
+            "start_us": 80.887
+          }
+        ],
+        "status": "80.887–86.215 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1140,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "dispatch",
+        "title": "Routed dispatch",
+        "col": 2,
+        "row": 8,
+        "kind": "op",
+        "lines": [
+          "EP32 · owner hidden=3584",
+          "MoeDistributeDispatchV3"
+        ],
+        "description": "这是 routed EP 通信/计算融合，不计为 shared AG。",
+        "source": "ops/fused_moe/shared_experts.py",
+        "records": [
+          {
+            "row": 161,
+            "type": "MoeDistributeDispatchV3",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 35.581,
+            "output": "8192,3584;8192,112;1048576;28;896;1;8192",
+            "start_us": 86.286
+          }
+        ],
+        "status": "86.286–121.867 μs · s425",
+        "engine": "MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1290,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "gmm1",
+        "title": "Routed GMM1 + SiTU quant",
+        "col": 1,
+        "row": 9,
+        "kind": "op",
+        "lines": [
+          "动态 routed token buffer",
+          "MIX_AIC"
+        ],
+        "description": "shared 激活在这份 capture 中位于它之后。",
+        "source": "ops/fused_moe/shared_experts.py",
+        "records": [
+          {
+            "row": 162,
+            "type": "GroupedMatmulSituQuant",
+            "stream": "425",
+            "core": "MIX_AIC",
+            "duration": 121.893,
+            "output": "8192,3072;8192,48,2",
+            "start_us": 121.889
+          }
+        ],
+        "status": "121.889–243.782 μs · s425",
+        "engine": "MIX_AIC",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 1440,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "gmm2",
+        "title": "Routed GMM2",
+        "col": 1,
+        "row": 10,
+        "kind": "op",
+        "lines": [
+          "→ expert partial hidden=3584",
+          "MIX_AIC"
+        ],
+        "description": "保持真实 routed 路径。",
+        "source": "ops/fused_moe/shared_experts.py",
+        "records": [
+          {
+            "row": 163,
+            "type": "GroupedMatmul",
+            "stream": "425",
+            "core": "MIX_AIC",
+            "duration": 62.684,
+            "output": "8192,3584",
+            "start_us": 243.853
+          }
+        ],
+        "status": "243.853–306.537 μs · s425",
+        "engine": "MIX_AIC",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 1590,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "combine",
+        "title": "Routed combine",
+        "col": 2,
+        "row": 11,
+        "kind": "op",
+        "lines": [
+          "EP32 → owner [16,3584]",
+          "MoeDistributeCombineV3"
+        ],
+        "description": "设备完成后才执行 shared 激活。",
+        "source": "ops/fused_moe/shared_experts.py",
+        "records": [
+          {
+            "row": 164,
+            "type": "MoeDistributeCombineV3",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 82.611,
+            "output": "16,3584",
+            "start_us": 306.608
+          }
+        ],
+        "status": "306.608–389.219 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1740,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "act",
+        "title": "Shared SiTU + MX quant",
+        "col": 2,
+        "row": 12,
+        "kind": "op",
+        "lines": [
+          "[128,1536] → [128,768]",
+          "SituMxQuant · 主流 425"
+        ],
+        "description": "实测位于 combine 后、shared down GEMM 前。",
+        "source": "ops/fused_moe/shared_experts.py",
+        "records": [
+          {
+            "row": 165,
+            "type": "SituMxQuant",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 6.049,
+            "output": "128,768;128,12,2",
+            "start_us": 389.338
+          }
+        ],
+        "status": "389.338–395.387 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1890,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "down",
+        "title": "Shared down GEMM",
+        "col": 1,
+        "row": 13,
+        "kind": "op",
+        "lines": [
+          "[128,768] → [128,7168]",
+          "主流 425 · AI_CORE"
+        ],
+        "description": "shared weight shard 对所有 owner 行产生部分和。",
+        "source": "ops/fused_moe/shared_experts.py",
+        "records": [
+          {
+            "row": 166,
+            "type": "QuantBatchMatmulV3",
+            "stream": "425",
+            "core": "AI_CORE",
+            "duration": 7.794,
+            "output": "128,7168",
+            "start_us": 395.457
+          }
+        ],
+        "status": "395.457–403.251 μs · s425",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 2040,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "rs",
+        "title": "Shared output RS",
+        "col": 3,
+        "row": 14,
+        "kind": "comm",
+        "lines": [
+          "sum → owner [16,7168]",
+          "localTP8"
+        ],
+        "description": "本 capture 中完成后才执行 latent up。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 167,
+            "type": "hcom_reduceScatter_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 26.101,
+            "output": "N/A",
+            "start_us": 404.3
+          }
+        ],
+        "status": "404.300–430.401 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 2190,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "up_quant",
+        "title": "Latent up norm + MX quant",
+        "col": 2,
+        "row": 15,
+        "kind": "op",
+        "lines": [
+          "owner [16,3584]",
+          "RmsNormDynamicMxQuant"
+        ],
+        "description": "属于 routed 输出变换。",
+        "source": "ops/fused_moe/fused_moe.py",
+        "records": [
+          {
+            "row": 168,
+            "type": "RmsNormDynamicMxQuant",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 3.523,
+            "output": "16,3584;16,56,2;",
+            "start_us": 431.225
+          }
+        ],
+        "status": "431.225–434.748 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 2340,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "latent_up",
+        "title": "Routed latent up GEMM",
+        "col": 1,
+        "row": 16,
+        "kind": "op",
+        "lines": [
+          "[16,3584] → [16,7168]",
+          "主流 425"
+        ],
+        "description": "与 shared RS 的实测交集为 0。",
+        "source": "ops/fused_moe/fused_moe.py",
+        "records": [
+          {
+            "row": 169,
+            "type": "QuantBatchMatmulV3",
+            "stream": "425",
+            "core": "AI_CORE",
+            "duration": 12.345,
+            "output": "16,7168",
+            "start_us": 434.77
+          }
+        ],
+        "status": "434.770–447.115 μs · s425",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 2490,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "add",
+        "title": "Shared + routed",
+        "col": 2,
+        "row": 17,
+        "kind": "op",
+        "lines": [
+          "owner [16,7168]",
+          "ForeachAddList"
+        ],
+        "description": "二者都就绪后相加。",
+        "source": "ops/fused_moe/fused_moe.py",
+        "records": [
+          {
+            "row": 170,
+            "type": "ForeachAddList",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 6.613,
+            "output": "16,7168",
+            "start_us": 447.234
+          }
+        ],
+        "status": "447.234–453.847 μs · s425",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 2640,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "out",
+        "title": "返回 owner / 下一模块",
+        "col": 0,
+        "row": 18,
+        "kind": "op",
+        "lines": [
+          "[16,7168] · 保留 token 顺序",
+          "完成 join 后才可消费"
+        ],
+        "description": "这是返回结果的依赖边界，不额外假造一个 device kernel。",
+        "source": "ops/finegrained_tp.py",
+        "records": [],
+        "status": "源码依赖 / 数据归属",
+        "engine": "",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "source",
+        "x": 36,
+        "y": 2790,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      }
+    ],
+    "edges": [
+      {
+        "id": "p0",
+        "src": "add",
+        "dst": "out",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 2686
+          },
+          {
+            "x": 296,
+            "y": 2686
+          },
+          {
+            "x": 296,
+            "y": 2843
+          },
+          {
+            "x": 278,
+            "y": 2843
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p1",
+        "src": "in",
+        "dst": "router",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 129
+          },
+          {
+            "x": 296,
+            "y": 129
+          },
+          {
+            "x": 296,
+            "y": 293
+          },
+          {
+            "x": 336,
+            "y": 293
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p2",
+        "src": "router",
+        "dst": "ag",
+        "label": "本部署实际执行顺序",
+        "shape": "",
+        "order": true,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 286
+          },
+          {
+            "x": 918,
+            "y": 286
+          },
+          {
+            "x": 918,
+            "y": 422
+          },
+          {
+            "x": 936,
+            "y": 422
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p3",
+        "src": "ag",
+        "dst": "down_quant",
+        "label": "本部署实际执行顺序",
+        "shape": "",
+        "order": true,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 436
+          },
+          {
+            "x": 918,
+            "y": 436
+          },
+          {
+            "x": 918,
+            "y": 593
+          },
+          {
+            "x": 878,
+            "y": 593
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p4",
+        "src": "down_quant",
+        "dst": "latent_down",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 586
+          },
+          {
+            "x": 618,
+            "y": 586
+          },
+          {
+            "x": 618,
+            "y": 729
+          },
+          {
+            "x": 578,
+            "y": 729
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p5",
+        "src": "latent_down",
+        "dst": "quant",
+        "label": "本部署实际执行顺序",
+        "shape": "",
+        "order": true,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 743
+          },
+          {
+            "x": 596,
+            "y": 743
+          },
+          {
+            "x": 596,
+            "y": 886
+          },
+          {
+            "x": 636,
+            "y": 886
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p6",
+        "src": "quant",
+        "dst": "up",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 900
+          },
+          {
+            "x": 596,
+            "y": 900
+          },
+          {
+            "x": 596,
+            "y": 1029
+          },
+          {
+            "x": 578,
+            "y": 1029
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p7",
+        "src": "up",
+        "dst": "topk",
+        "label": "本部署实际执行顺序",
+        "shape": "",
+        "order": true,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 1043
+          },
+          {
+            "x": 618,
+            "y": 1043
+          },
+          {
+            "x": 618,
+            "y": 1186
+          },
+          {
+            "x": 636,
+            "y": 1186
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p8",
+        "src": "topk",
+        "dst": "dispatch",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 757,
+            "y": 1246
+          },
+          {
+            "x": 757,
+            "y": 1290
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p9",
+        "src": "dispatch",
+        "dst": "gmm1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 1336
+          },
+          {
+            "x": 618,
+            "y": 1336
+          },
+          {
+            "x": 618,
+            "y": 1493
+          },
+          {
+            "x": 578,
+            "y": 1493
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p10",
+        "src": "gmm1",
+        "dst": "gmm2",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 457,
+            "y": 1546
+          },
+          {
+            "x": 457,
+            "y": 1590
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p11",
+        "src": "gmm2",
+        "dst": "combine",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 1643
+          },
+          {
+            "x": 618,
+            "y": 1643
+          },
+          {
+            "x": 618,
+            "y": 1793
+          },
+          {
+            "x": 636,
+            "y": 1793
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p12",
+        "src": "combine",
+        "dst": "act",
+        "label": "本部署实际执行顺序",
+        "shape": "",
+        "order": true,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 750,
+            "y": 1846
+          },
+          {
+            "x": 750,
+            "y": 1864
+          },
+          {
+            "x": 757,
+            "y": 1864
+          },
+          {
+            "x": 757,
+            "y": 1890
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p13",
+        "src": "act",
+        "dst": "down",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 1936
+          },
+          {
+            "x": 618,
+            "y": 1936
+          },
+          {
+            "x": 618,
+            "y": 2086
+          },
+          {
+            "x": 578,
+            "y": 2086
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p14",
+        "src": "down",
+        "dst": "rs",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 2100
+          },
+          {
+            "x": 918,
+            "y": 2100
+          },
+          {
+            "x": 918,
+            "y": 2229
+          },
+          {
+            "x": 936,
+            "y": 2229
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p15",
+        "src": "rs",
+        "dst": "up_quant",
+        "label": "本部署实际执行顺序",
+        "shape": "",
+        "order": true,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 2243
+          },
+          {
+            "x": 918,
+            "y": 2243
+          },
+          {
+            "x": 918,
+            "y": 2393
+          },
+          {
+            "x": 878,
+            "y": 2393
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p16",
+        "src": "up_quant",
+        "dst": "latent_up",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 2393
+          },
+          {
+            "x": 596,
+            "y": 2393
+          },
+          {
+            "x": 596,
+            "y": 2536
+          },
+          {
+            "x": 578,
+            "y": 2536
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p17",
+        "src": "latent_up",
+        "dst": "add",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 2550
+          },
+          {
+            "x": 596,
+            "y": 2550
+          },
+          {
+            "x": 596,
+            "y": 2700
+          },
+          {
+            "x": 636,
+            "y": 2700
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p18",
+        "src": "in",
+        "dst": "ag",
+        "label": "shared input",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 143
+          },
+          {
+            "x": 914,
+            "y": 143
+          },
+          {
+            "x": 914,
+            "y": 450
+          },
+          {
+            "x": 936,
+            "y": 450
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p19",
+        "src": "in",
+        "dst": "down_quant",
+        "label": "owner hidden",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 157
+          },
+          {
+            "x": 614,
+            "y": 157
+          },
+          {
+            "x": 614,
+            "y": 600
+          },
+          {
+            "x": 636,
+            "y": 600
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p20",
+        "src": "ag",
+        "dst": "quant",
+        "label": "gathered shared hidden",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 464
+          },
+          {
+            "x": 896,
+            "y": 464
+          },
+          {
+            "x": 896,
+            "y": 893
+          },
+          {
+            "x": 878,
+            "y": 893
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p21",
+        "src": "router",
+        "dst": "topk",
+        "label": "router logits",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 300
+          },
+          {
+            "x": 596,
+            "y": 300
+          },
+          {
+            "x": 596,
+            "y": 743
+          },
+          {
+            "x": 614,
+            "y": 743
+          },
+          {
+            "x": 614,
+            "y": 1200
+          },
+          {
+            "x": 636,
+            "y": 1200
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p22",
+        "src": "latent_down",
+        "dst": "dispatch",
+        "label": "routed latent hidden",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 757
+          },
+          {
+            "x": 600,
+            "y": 757
+          },
+          {
+            "x": 600,
+            "y": 1350
+          },
+          {
+            "x": 636,
+            "y": 1350
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p23",
+        "src": "up",
+        "dst": "act",
+        "label": "gate/up 结果",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 1057
+          },
+          {
+            "x": 596,
+            "y": 1057
+          },
+          {
+            "x": 596,
+            "y": 1950
+          },
+          {
+            "x": 636,
+            "y": 1950
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p24",
+        "src": "combine",
+        "dst": "up_quant",
+        "label": "routed result",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 764,
+            "y": 1846
+          },
+          {
+            "x": 764,
+            "y": 1872
+          },
+          {
+            "x": 896,
+            "y": 1872
+          },
+          {
+            "x": 896,
+            "y": 2322
+          },
+          {
+            "x": 757,
+            "y": 2322
+          },
+          {
+            "x": 757,
+            "y": 2340
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p25",
+        "src": "rs",
+        "dst": "add",
+        "label": "shared result",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 2257
+          },
+          {
+            "x": 900,
+            "y": 2257
+          },
+          {
+            "x": 900,
+            "y": 2693
+          },
+          {
+            "x": 878,
+            "y": 2693
+          }
+        ],
+        "backedge": true
+      }
+    ],
+    "parallelGroups": [],
+    "windows": [
+      [
+        "Shared 的实际设备交集",
+        "920 个 MoE 样本里，所测 shared AG/latent-down、RS/latent-up、gate-up/GMM1、down/combine 的交集 min/median/max 全为 0。"
+      ],
+      [
+        "配置与设备事实分开",
+        "multistream_overlap_shared_expert=true；这些计算 kernel 实际都在 stream 425。这里只记录该部署行为，尚未定位跨流未体现的原因。"
+      ]
+    ],
+    "stages": [
+      {
+        "title": "输入 / 缓存（非引擎）",
+        "index": 0,
+        "x": 20,
+        "y": 18,
+        "w": 270,
+        "h": 2918
+      },
+      {
+        "title": "Cube / MIX_AIC",
+        "index": 1,
+        "x": 320,
+        "y": 18,
+        "w": 270,
+        "h": 2918
+      },
+      {
+        "title": "Vector / MIX_AIV",
+        "index": 2,
+        "x": 620,
+        "y": 18,
+        "w": 270,
+        "h": 2918
+      },
+      {
+        "title": "Communication",
+        "index": 3,
+        "x": 920,
+        "y": 18,
+        "w": 270,
+        "h": 2918
+      }
+    ],
+    "resourceLanes": true,
+    "observed": true,
+    "family": "shared",
+    "width": 1200,
+    "height": 2954
+  },
+  "dense": {
+    "nodes": [
+      {
+        "id": "in",
+        "title": "第 0 层 Dense FFN 输入",
+        "col": 0,
+        "row": 0,
+        "kind": "op",
+        "lines": [
+          "owner [16,7168]",
+          "实际双 chunk：8 + 8 行"
+        ],
+        "description": "本部署采用 ChunkedMLPTP。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 87,
+            "type": "AttnResFwd",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 9.01,
+            "output": "114688;114688;114688",
+            "start_us": 0
+          }
+        ],
+        "status": "0.000–9.010 μs · s425",
+        "engine": "MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 36,
+        "y": 90,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      },
+      {
+        "id": "ag0",
+        "title": "Input AG · chunk 0",
+        "col": 3,
+        "row": 1,
+        "kind": "comm",
+        "lines": [
+          "owner [8,H] → [64,H]",
+          "先提交 AG0、AG1"
+        ],
+        "description": "全 rank 通信序列相同。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 88,
+            "type": "hcom_allGather_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 11.816,
+            "output": "N/A",
+            "start_us": 11.375
+          }
+        ],
+        "status": "11.375–23.191 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 240,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "quant0",
+        "title": "MX quant · chunk 0",
+        "col": 2,
+        "row": 2,
+        "kind": "op",
+        "lines": [
+          "[64,7168] → FP8 + scale",
+          "主流 425"
+        ],
+        "description": "只等本 chunk 输入。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 90,
+            "type": "DynamicMxQuant",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 5.622,
+            "output": "64,7168;64,112,2",
+            "start_us": 24.187
+          }
+        ],
+        "status": "24.187–29.809 μs · s425",
+        "engine": "MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 390,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "up0",
+        "title": "Gate/up · chunk 0",
+        "col": 1,
+        "row": 3,
+        "kind": "op",
+        "lines": [
+          "[64,7168] → [64,8448]",
+          "I/P=4224 · AI_CORE"
+        ],
+        "description": "本 chunk 的两支中间通道配对。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 91,
+            "type": "QuantBatchMatmulV3",
+            "stream": "425",
+            "core": "AI_CORE",
+            "duration": 31.503,
+            "output": "64,8448",
+            "start_us": 29.831
+          }
+        ],
+        "status": "29.831–61.334 μs · s425",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 540,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "act0",
+        "title": "SiTU / MX quant · chunk 0",
+        "col": 2,
+        "row": 4,
+        "kind": "op",
+        "lines": [
+          "真实为多笔 Slice/Cast/Tanh/Mul",
+          "再 DynamicMxQuant → [64,4224]"
+        ],
+        "description": "这是多个实际 kernel 的顺序组，不是单个 SituMxQuant 融合 kernel。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 92,
+            "type": "Slice",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 4.276,
+            "output": "64,4224",
+            "start_us": 61.356
+          },
+          {
+            "row": 93,
+            "type": "Cast",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 4.518,
+            "output": "64,4224",
+            "start_us": 65.654
+          },
+          {
+            "row": 94,
+            "type": "Slice",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 3.824,
+            "output": "64,4224",
+            "start_us": 70.194
+          },
+          {
+            "row": 95,
+            "type": "Cast",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.238,
+            "output": "64,4224",
+            "start_us": 74.04
+          },
+          {
+            "row": 96,
+            "type": "Muls",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 4.325,
+            "output": "64,4224",
+            "start_us": 76.3
+          },
+          {
+            "row": 97,
+            "type": "Tanh",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 5.417,
+            "output": "64,4224",
+            "start_us": 80.647
+          },
+          {
+            "row": 98,
+            "type": "Mul",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 3.839,
+            "output": "64,4224",
+            "start_us": 86.086
+          },
+          {
+            "row": 99,
+            "type": "Sigmoid",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 3.886,
+            "output": "64,4224",
+            "start_us": 89.947
+          },
+          {
+            "row": 100,
+            "type": "Mul",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.394,
+            "output": "64,4224",
+            "start_us": 93.855
+          },
+          {
+            "row": 101,
+            "type": "Muls",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 3.191,
+            "output": "64,4224",
+            "start_us": 96.271
+          },
+          {
+            "row": 102,
+            "type": "Tanh",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 4.121,
+            "output": "64,4224",
+            "start_us": 99.484
+          },
+          {
+            "row": 103,
+            "type": "Mul",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.232,
+            "output": "64,4224",
+            "start_us": 103.627
+          },
+          {
+            "row": 104,
+            "type": "Mul",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.428,
+            "output": "64,4224",
+            "start_us": 105.881
+          },
+          {
+            "row": 105,
+            "type": "Cast",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 5.505,
+            "output": "64,4224",
+            "start_us": 108.331
+          },
+          {
+            "row": 106,
+            "type": "DynamicMxQuant",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 4.247,
+            "output": "64,4224;64,66,2",
+            "start_us": 113.858
+          }
+        ],
+        "status": "61.356–118.105 μs · s425",
+        "engine": "AI_VECTOR_CORE / MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 690,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "down0",
+        "title": "Down GEMM · chunk 0",
+        "col": 1,
+        "row": 5,
+        "kind": "op",
+        "lines": [
+          "[64,4224] → [64,7168]",
+          "AI_CORE"
+        ],
+        "description": "计算各 owner 的 hidden 部分和。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 107,
+            "type": "QuantBatchMatmulV3",
+            "stream": "425",
+            "core": "AI_CORE",
+            "duration": 15.556,
+            "output": "64,7168",
+            "start_us": 118.127
+          }
+        ],
+        "status": "118.127–133.683 μs · s425",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 840,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "rs0",
+        "title": "Output RS · chunk 0",
+        "col": 3,
+        "row": 6,
+        "kind": "comm",
+        "lines": [
+          "[64,7168] → [8,7168]",
+          "sum + owner rows"
+        ],
+        "description": "RS0 与 chunk1 gate/up 有实际交集。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 109,
+            "type": "hcom_reduceScatter_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 27.067,
+            "output": "N/A",
+            "start_us": 135.408
+          }
+        ],
+        "status": "135.408–162.475 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 990,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "ag1",
+        "title": "Input AG · chunk 1",
+        "col": 3,
+        "row": 2,
+        "kind": "comm",
+        "lines": [
+          "owner [8,H] → [64,H]",
+          "先提交 AG0、AG1"
+        ],
+        "description": "全 rank 通信序列相同。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 89,
+            "type": "hcom_allGather_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 16.068,
+            "output": "N/A",
+            "start_us": 23.359
+          }
+        ],
+        "status": "23.359–39.427 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 390,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "quant1",
+        "title": "MX quant · chunk 1",
+        "col": 2,
+        "row": 6,
+        "kind": "op",
+        "lines": [
+          "[64,7168] → FP8 + scale",
+          "主流 425"
+        ],
+        "description": "只等本 chunk 输入。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 108,
+            "type": "DynamicMxQuant",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 4.847,
+            "output": "64,7168;64,112,2",
+            "start_us": 133.802
+          }
+        ],
+        "status": "133.802–138.649 μs · s425",
+        "engine": "MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 990,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "up1",
+        "title": "Gate/up · chunk 1",
+        "col": 1,
+        "row": 7,
+        "kind": "op",
+        "lines": [
+          "[64,7168] → [64,8448]",
+          "I/P=4224 · AI_CORE"
+        ],
+        "description": "本 chunk 的两支中间通道配对。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 110,
+            "type": "QuantBatchMatmulV3",
+            "stream": "425",
+            "core": "AI_CORE",
+            "duration": 30.28,
+            "output": "64,8448",
+            "start_us": 138.671
+          }
+        ],
+        "status": "138.671–168.951 μs · s425",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 1140,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "act1",
+        "title": "SiTU / MX quant · chunk 1",
+        "col": 2,
+        "row": 8,
+        "kind": "op",
+        "lines": [
+          "真实为多笔 Slice/Cast/Tanh/Mul",
+          "再 DynamicMxQuant → [64,4224]"
+        ],
+        "description": "这是多个实际 kernel 的顺序组，不是单个 SituMxQuant 融合 kernel。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 111,
+            "type": "Slice",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 4.031,
+            "output": "64,4224",
+            "start_us": 168.973
+          },
+          {
+            "row": 112,
+            "type": "Cast",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 3.305,
+            "output": "64,4224",
+            "start_us": 173.026
+          },
+          {
+            "row": 113,
+            "type": "Slice",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 3.718,
+            "output": "64,4224",
+            "start_us": 176.353
+          },
+          {
+            "row": 114,
+            "type": "Cast",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.363,
+            "output": "64,4224",
+            "start_us": 180.093
+          },
+          {
+            "row": 115,
+            "type": "Muls",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 4.298,
+            "output": "64,4224",
+            "start_us": 182.478
+          },
+          {
+            "row": 116,
+            "type": "Tanh",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 4.474,
+            "output": "64,4224",
+            "start_us": 186.798
+          },
+          {
+            "row": 117,
+            "type": "Mul",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.734,
+            "output": "64,4224",
+            "start_us": 191.294
+          },
+          {
+            "row": 118,
+            "type": "Sigmoid",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 3.713,
+            "output": "64,4224",
+            "start_us": 194.05
+          },
+          {
+            "row": 119,
+            "type": "Mul",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.438,
+            "output": "64,4224",
+            "start_us": 197.785
+          },
+          {
+            "row": 120,
+            "type": "Muls",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 3.563,
+            "output": "64,4224",
+            "start_us": 200.245
+          },
+          {
+            "row": 121,
+            "type": "Tanh",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 4.085,
+            "output": "64,4224",
+            "start_us": 203.83
+          },
+          {
+            "row": 122,
+            "type": "Mul",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.358,
+            "output": "64,4224",
+            "start_us": 207.937
+          },
+          {
+            "row": 123,
+            "type": "Mul",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.486,
+            "output": "64,4224",
+            "start_us": 210.317
+          },
+          {
+            "row": 124,
+            "type": "Cast",
+            "stream": "425",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.562,
+            "output": "64,4224",
+            "start_us": 212.825
+          },
+          {
+            "row": 125,
+            "type": "DynamicMxQuant",
+            "stream": "425",
+            "core": "MIX_AIV",
+            "duration": 4.344,
+            "output": "64,4224;64,66,2",
+            "start_us": 215.409
+          }
+        ],
+        "status": "168.973–219.753 μs · s425",
+        "engine": "AI_VECTOR_CORE / MIX_AIV",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1290,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "down1",
+        "title": "Down GEMM · chunk 1",
+        "col": 1,
+        "row": 9,
+        "kind": "op",
+        "lines": [
+          "[64,4224] → [64,7168]",
+          "AI_CORE"
+        ],
+        "description": "计算各 owner 的 hidden 部分和。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 126,
+            "type": "QuantBatchMatmulV3",
+            "stream": "425",
+            "core": "AI_CORE",
+            "duration": 15.05,
+            "output": "64,7168",
+            "start_us": 219.775
+          }
+        ],
+        "status": "219.775–234.825 μs · s425",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 1440,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "rs1",
+        "title": "Output RS · chunk 1",
+        "col": 3,
+        "row": 10,
+        "kind": "comm",
+        "lines": [
+          "[64,7168] → [8,7168]",
+          "sum + owner rows"
+        ],
+        "description": "RS0 与 chunk1 gate/up 有实际交集。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 127,
+            "type": "hcom_reduceScatter_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 20.256,
+            "output": "N/A",
+            "start_us": 236.4
+          }
+        ],
+        "status": "236.400–256.656 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 1590,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "join",
+        "title": "还原 owner chunk 顺序",
+        "col": 0,
+        "row": 12,
+        "kind": "op",
+        "lines": [
+          "[8,H] + [8,H] → [16,H]",
+          "等 RS0 和 RS1"
+        ],
+        "description": "源码写回预分配输出；图不额外假造 Concat kernel。",
+        "source": "ops/finegrained_tp.py",
+        "records": [],
+        "status": "源码依赖 / 数据归属",
+        "engine": "",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "source",
+        "x": 36,
+        "y": 1890,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      }
+    ],
+    "edges": [
+      {
+        "id": "p0",
+        "src": "ag0",
+        "dst": "quant0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 286
+          },
+          {
+            "x": 896,
+            "y": 286
+          },
+          {
+            "x": 896,
+            "y": 443
+          },
+          {
+            "x": 878,
+            "y": 443
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p1",
+        "src": "quant0",
+        "dst": "up0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 443
+          },
+          {
+            "x": 596,
+            "y": 443
+          },
+          {
+            "x": 596,
+            "y": 586
+          },
+          {
+            "x": 578,
+            "y": 586
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p2",
+        "src": "up0",
+        "dst": "act0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 600
+          },
+          {
+            "x": 618,
+            "y": 600
+          },
+          {
+            "x": 618,
+            "y": 736
+          },
+          {
+            "x": 636,
+            "y": 736
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p3",
+        "src": "act0",
+        "dst": "down0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 750
+          },
+          {
+            "x": 596,
+            "y": 750
+          },
+          {
+            "x": 596,
+            "y": 879
+          },
+          {
+            "x": 578,
+            "y": 879
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p4",
+        "src": "down0",
+        "dst": "rs0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 893
+          },
+          {
+            "x": 918,
+            "y": 893
+          },
+          {
+            "x": 918,
+            "y": 1036
+          },
+          {
+            "x": 936,
+            "y": 1036
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p5",
+        "src": "in",
+        "dst": "ag0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 136
+          },
+          {
+            "x": 918,
+            "y": 136
+          },
+          {
+            "x": 918,
+            "y": 300
+          },
+          {
+            "x": 936,
+            "y": 300
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p6",
+        "src": "ag1",
+        "dst": "quant1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 436
+          },
+          {
+            "x": 918,
+            "y": 436
+          },
+          {
+            "x": 918,
+            "y": 879
+          },
+          {
+            "x": 896,
+            "y": 879
+          },
+          {
+            "x": 896,
+            "y": 1043
+          },
+          {
+            "x": 878,
+            "y": 1043
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p7",
+        "src": "quant1",
+        "dst": "up1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 1036
+          },
+          {
+            "x": 618,
+            "y": 1036
+          },
+          {
+            "x": 618,
+            "y": 1186
+          },
+          {
+            "x": 578,
+            "y": 1186
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p8",
+        "src": "up1",
+        "dst": "act1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 1200
+          },
+          {
+            "x": 618,
+            "y": 1200
+          },
+          {
+            "x": 618,
+            "y": 1336
+          },
+          {
+            "x": 636,
+            "y": 1336
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p9",
+        "src": "act1",
+        "dst": "down1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 636,
+            "y": 1350
+          },
+          {
+            "x": 596,
+            "y": 1350
+          },
+          {
+            "x": 596,
+            "y": 1486
+          },
+          {
+            "x": 578,
+            "y": 1486
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p10",
+        "src": "down1",
+        "dst": "rs1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 1500
+          },
+          {
+            "x": 918,
+            "y": 1500
+          },
+          {
+            "x": 918,
+            "y": 1636
+          },
+          {
+            "x": 936,
+            "y": 1636
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p11",
+        "src": "in",
+        "dst": "ag1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 150
+          },
+          {
+            "x": 296,
+            "y": 150
+          },
+          {
+            "x": 296,
+            "y": 372
+          },
+          {
+            "x": 914,
+            "y": 372
+          },
+          {
+            "x": 914,
+            "y": 450
+          },
+          {
+            "x": 936,
+            "y": 450
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p12",
+        "src": "ag0",
+        "dst": "ag1",
+        "label": "通信发起次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 1057,
+            "y": 346
+          },
+          {
+            "x": 1057,
+            "y": 390
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p13",
+        "src": "down0",
+        "dst": "quant1",
+        "label": "主流先完成 chunk0 计算",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 578,
+            "y": 907
+          },
+          {
+            "x": 596,
+            "y": 907
+          },
+          {
+            "x": 596,
+            "y": 1050
+          },
+          {
+            "x": 636,
+            "y": 1050
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p14",
+        "src": "rs0",
+        "dst": "rs1",
+        "label": "通信次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 1057,
+            "y": 1096
+          },
+          {
+            "x": 1057,
+            "y": 1590
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p15",
+        "src": "rs0",
+        "dst": "join",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 1050
+          },
+          {
+            "x": 918,
+            "y": 1050
+          },
+          {
+            "x": 918,
+            "y": 1422
+          },
+          {
+            "x": 296,
+            "y": 1422
+          },
+          {
+            "x": 296,
+            "y": 1936
+          },
+          {
+            "x": 278,
+            "y": 1936
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p16",
+        "src": "rs1",
+        "dst": "join",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 1650
+          },
+          {
+            "x": 300,
+            "y": 1650
+          },
+          {
+            "x": 300,
+            "y": 1950
+          },
+          {
+            "x": 278,
+            "y": 1950
+          }
+        ],
+        "backedge": true
+      }
+    ],
+    "parallelGroups": [
+      {
+        "id": "ag1:up0",
+        "color": "#71dac8",
+        "title": "交集中位 6.338 μs",
+        "parts": [
+          [
+            "ag1"
+          ],
+          [
+            "up0"
+          ]
+        ]
+      },
+      {
+        "id": "rs0:up1",
+        "color": "#efc978",
+        "title": "交集中位 25.764 μs",
+        "parts": [
+          [
+            "rs0"
+          ],
+          [
+            "up1"
+          ]
+        ]
+      }
+    ],
+    "windows": [
+      [
+        "Dense 双 chunk 执行顺序",
+        "10 次 Dense 调用都执行 AG0→AG1→RS0→RS1；保留两个 chunk 的输入/输出依赖。"
+      ],
+      [
+        "实际交集有限",
+        "AG1/gate-up0 与 RS0/gate-up1 有正交集；首尾通信、SiTU Vector 和同 chunk 的 GEMM 依赖仍然暴露。"
+      ]
+    ],
+    "stages": [
+      {
+        "title": "输入 / 缓存（非引擎）",
+        "index": 0,
+        "x": 20,
+        "y": 18,
+        "w": 270,
+        "h": 2018
+      },
+      {
+        "title": "Cube / MIX_AIC",
+        "index": 1,
+        "x": 320,
+        "y": 18,
+        "w": 270,
+        "h": 2018
+      },
+      {
+        "title": "Vector / MIX_AIV",
+        "index": 2,
+        "x": 620,
+        "y": 18,
+        "w": 270,
+        "h": 2018
+      },
+      {
+        "title": "Communication",
+        "index": 3,
+        "x": 920,
+        "y": 18,
+        "w": 270,
+        "h": 2018
+      }
+    ],
+    "resourceLanes": true,
+    "observed": true,
+    "family": "dense",
+    "width": 1200,
+    "height": 2054
+  },
+  "head": {
+    "nodes": [
+      {
+        "id": "in",
+        "title": "Final RMSNorm / logits rows",
+        "col": 0,
+        "row": 0,
+        "kind": "op",
+        "lines": [
+          "owner [16,7168]",
+          "实际分成 8 + 8 行"
+        ],
+        "description": "每 chunk 是本次 logits 行，最终仍等待完整请求/verify 结果。",
+        "source": "ops/vocab_parallel_embedding.py",
+        "records": [
+          {
+            "row": 4145,
+            "type": "RmsNorm",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 5.337,
+            "output": "16,7168;16,1",
+            "start_us": 0
+          }
+        ],
+        "status": "0.000–5.337 μs · s59",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 36,
+        "y": 90,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      },
+      {
+        "id": "ag0",
+        "title": "Hidden AG · chunk 0",
+        "col": 3,
+        "row": 1,
+        "kind": "comm",
+        "lines": [
+          "[8,H] → [64,H]",
+          "先提交 AG0、AG1"
+        ],
+        "description": "不是旧 DCP 的 vocab logits AG。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 4146,
+            "type": "hcom_allGather_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 10.899,
+            "output": "N/A",
+            "start_us": 6.276
+          }
+        ],
+        "status": "6.276–17.175 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 240,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "mm0",
+        "title": "Head GEMM · chunk 0",
+        "col": 1,
+        "row": 2,
+        "kind": "op",
+        "lines": [
+          "[64,H] × [20480,H] BF16",
+          "→ [64,20480] logits"
+        ],
+        "description": "两次 GEMM 在主流 59 顺序执行。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 4148,
+            "type": "MatMulV3",
+            "stream": "59",
+            "core": "AI_CORE",
+            "duration": 148.466,
+            "output": "64,20480",
+            "start_us": 17.93
+          }
+        ],
+        "status": "17.930–166.396 μs · s59",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 390,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "a2a0",
+        "title": "Logits A2A · chunk 0",
+        "col": 3,
+        "row": 3,
+        "kind": "comm",
+        "lines": [
+          "返回 owner [8,163840]",
+          "每个 owner 完整词表"
+        ],
+        "description": "A2A0 与 GEMM1 有实测交集。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 4150,
+            "type": "hcom_alltoall_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 21.076,
+            "output": "N/A",
+            "start_us": 167.318
+          }
+        ],
+        "status": "167.318–188.394 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 540,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "restore0",
+        "title": "Owner transpose · chunk 0",
+        "col": 2,
+        "row": 5,
+        "kind": "op",
+        "lines": [
+          "[8,8,20480] → owner vocab",
+          "实际 Transpose kernel"
+        ],
+        "description": "最后仍须恢复 owner 行和词表顺序。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 4151,
+            "type": "Transpose",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 11.674,
+            "output": "8,8,20480",
+            "start_us": 304.443
+          }
+        ],
+        "status": "304.443–316.117 μs · s59",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 840,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "ag1",
+        "title": "Hidden AG · chunk 1",
+        "col": 3,
+        "row": 2,
+        "kind": "comm",
+        "lines": [
+          "[8,H] → [64,H]",
+          "先提交 AG0、AG1"
+        ],
+        "description": "不是旧 DCP 的 vocab logits AG。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 4147,
+            "type": "hcom_allGather_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 11.551,
+            "output": "N/A",
+            "start_us": 17.447
+          }
+        ],
+        "status": "17.447–28.998 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 390,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "mm1",
+        "title": "Head GEMM · chunk 1",
+        "col": 1,
+        "row": 3,
+        "kind": "op",
+        "lines": [
+          "[64,H] × [20480,H] BF16",
+          "→ [64,20480] logits"
+        ],
+        "description": "两次 GEMM 在主流 59 顺序执行。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 4149,
+            "type": "MatMulV3",
+            "stream": "59",
+            "core": "AI_CORE",
+            "duration": 137.809,
+            "output": "64,20480",
+            "start_us": 166.515
+          }
+        ],
+        "status": "166.515–304.324 μs · s59",
+        "engine": "AI_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 336,
+        "y": 540,
+        "w": 242,
+        "h": 106,
+        "stage": 1
+      },
+      {
+        "id": "a2a1",
+        "title": "Logits A2A · chunk 1",
+        "col": 3,
+        "row": 4,
+        "kind": "comm",
+        "lines": [
+          "返回 owner [8,163840]",
+          "每个 owner 完整词表"
+        ],
+        "description": "A2A0 与 GEMM1 有实测交集。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 4152,
+            "type": "hcom_alltoall_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 15.237,
+            "output": "N/A",
+            "start_us": 305.257
+          }
+        ],
+        "status": "305.257–320.494 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 690,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "restore1",
+        "title": "Owner transpose · chunk 1",
+        "col": 2,
+        "row": 6,
+        "kind": "op",
+        "lines": [
+          "[8,8,20480] → owner vocab",
+          "实际 Transpose kernel"
+        ],
+        "description": "最后仍须恢复 owner 行和词表顺序。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 4153,
+            "type": "Transpose",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 10.082,
+            "output": "8,8,20480",
+            "start_us": 321.284
+          }
+        ],
+        "status": "321.284–331.366 μs · s59",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 990,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "join",
+        "title": "Concat logits → sampler",
+        "col": 2,
+        "row": 7,
+        "kind": "op",
+        "lines": [
+          "[8,V] + [8,V] → [16,163840]",
+          "之后才 rejection / resample"
+        ],
+        "description": "完整 owner logits 经实际 ConcatD 拼齐后进入 sampler。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 4154,
+            "type": "ConcatD",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 6.589,
+            "output": "16,163840",
+            "start_us": 331.388
+          }
+        ],
+        "status": "331.388–337.977 μs · s59",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 1140,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      }
+    ],
+    "edges": [
+      {
+        "id": "p0",
+        "src": "ag0",
+        "dst": "mm0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 286
+          },
+          {
+            "x": 596,
+            "y": 286
+          },
+          {
+            "x": 596,
+            "y": 436
+          },
+          {
+            "x": 578,
+            "y": 436
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p1",
+        "src": "mm0",
+        "dst": "a2a0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 450
+          },
+          {
+            "x": 918,
+            "y": 450
+          },
+          {
+            "x": 918,
+            "y": 586
+          },
+          {
+            "x": 936,
+            "y": 586
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p2",
+        "src": "a2a0",
+        "dst": "restore0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 600
+          },
+          {
+            "x": 918,
+            "y": 600
+          },
+          {
+            "x": 918,
+            "y": 893
+          },
+          {
+            "x": 878,
+            "y": 893
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p3",
+        "src": "in",
+        "dst": "ag0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 136
+          },
+          {
+            "x": 918,
+            "y": 136
+          },
+          {
+            "x": 918,
+            "y": 300
+          },
+          {
+            "x": 936,
+            "y": 300
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p4",
+        "src": "ag1",
+        "dst": "mm1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 436
+          },
+          {
+            "x": 596,
+            "y": 436
+          },
+          {
+            "x": 596,
+            "y": 579
+          },
+          {
+            "x": 578,
+            "y": 579
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p5",
+        "src": "mm1",
+        "dst": "a2a1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 578,
+            "y": 593
+          },
+          {
+            "x": 914,
+            "y": 593
+          },
+          {
+            "x": 914,
+            "y": 736
+          },
+          {
+            "x": 936,
+            "y": 736
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p6",
+        "src": "a2a1",
+        "dst": "restore1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 750
+          },
+          {
+            "x": 896,
+            "y": 750
+          },
+          {
+            "x": 896,
+            "y": 1043
+          },
+          {
+            "x": 878,
+            "y": 1043
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p7",
+        "src": "in",
+        "dst": "ag1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 150
+          },
+          {
+            "x": 914,
+            "y": 150
+          },
+          {
+            "x": 914,
+            "y": 450
+          },
+          {
+            "x": 936,
+            "y": 450
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p8",
+        "src": "restore0",
+        "dst": "join",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 757,
+            "y": 946
+          },
+          {
+            "x": 757,
+            "y": 964
+          },
+          {
+            "x": 618,
+            "y": 964
+          },
+          {
+            "x": 618,
+            "y": 1122
+          },
+          {
+            "x": 750,
+            "y": 1122
+          },
+          {
+            "x": 750,
+            "y": 1140
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p9",
+        "src": "restore1",
+        "dst": "join",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 757,
+            "y": 1096
+          },
+          {
+            "x": 757,
+            "y": 1114
+          },
+          {
+            "x": 764,
+            "y": 1114
+          },
+          {
+            "x": 764,
+            "y": 1140
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p10",
+        "src": "ag0",
+        "dst": "ag1",
+        "label": "通信次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 1057,
+            "y": 346
+          },
+          {
+            "x": 1057,
+            "y": 390
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p11",
+        "src": "mm0",
+        "dst": "mm1",
+        "label": "同流 Cube 次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 457,
+            "y": 496
+          },
+          {
+            "x": 457,
+            "y": 540
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p12",
+        "src": "a2a0",
+        "dst": "a2a1",
+        "label": "通信次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 1057,
+            "y": 646
+          },
+          {
+            "x": 1057,
+            "y": 690
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p13",
+        "src": "mm1",
+        "dst": "restore0",
+        "label": "源码先提交两块 GEMM/交换",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 578,
+            "y": 607
+          },
+          {
+            "x": 596,
+            "y": 607
+          },
+          {
+            "x": 596,
+            "y": 893
+          },
+          {
+            "x": 636,
+            "y": 893
+          }
+        ],
+        "backedge": false
+      }
+    ],
+    "parallelGroups": [
+      {
+        "id": "ag1:mm0",
+        "color": "#71dac8",
+        "title": "交集中位 11.126 μs",
+        "parts": [
+          [
+            "ag1"
+          ],
+          [
+            "mm0"
+          ]
+        ]
+      },
+      {
+        "id": "a2a0:mm1",
+        "color": "#efc978",
+        "title": "交集中位 22.094 μs",
+        "parts": [
+          [
+            "a2a0"
+          ],
+          [
+            "mm1"
+          ]
+        ]
+      }
+    ],
+    "windows": [
+      [
+        "Head 双 chunk 执行顺序",
+        "10 个匹配调用都有两次 hidden AG、两次 GEMM、两次 logits A2A；不是旧 DCP logits all-gather。"
+      ]
+    ],
+    "stages": [
+      {
+        "title": "输入 / 缓存（非引擎）",
+        "index": 0,
+        "x": 20,
+        "y": 18,
+        "w": 270,
+        "h": 1268
+      },
+      {
+        "title": "Cube / MIX_AIC",
+        "index": 1,
+        "x": 320,
+        "y": 18,
+        "w": 270,
+        "h": 1268
+      },
+      {
+        "title": "Vector / MIX_AIV",
+        "index": 2,
+        "x": 620,
+        "y": 18,
+        "w": 270,
+        "h": 1268
+      },
+      {
+        "title": "Communication",
+        "index": 3,
+        "x": 920,
+        "y": 18,
+        "w": 270,
+        "h": 1268
+      }
+    ],
+    "resourceLanes": true,
+    "observed": true,
+    "family": "head",
+    "width": 1200,
+    "height": 1304
+  },
+  "embedding": {
+    "nodes": [
+      {
+        "id": "in",
+        "title": "Pad IDs / 双 chunk 入口",
+        "col": 0,
+        "row": 0,
+        "kind": "op",
+        "lines": [
+          "owner pad 128 IDs → 64 + 64",
+          "实际有效行随后裁回"
+        ],
+        "description": "这是入口 eager 区间，不将 pad capacity 与每卡有效 token 数混同。",
+        "source": "ops/vocab_parallel_embedding.py",
+        "records": [],
+        "status": "源码依赖 / 数据归属",
+        "engine": "",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "source",
+        "x": 36,
+        "y": 90,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      },
+      {
+        "id": "ag0",
+        "title": "IDs AG · chunk 0",
+        "col": 3,
+        "row": 1,
+        "kind": "comm",
+        "lines": [
+          "[64] → [512] IDs",
+          "INT64 token IDs"
+        ],
+        "description": "先提交两块 IDs AG。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 25,
+            "type": "hcom_allGather_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 22.497,
+            "output": "N/A",
+            "start_us": 0
+          }
+        ],
+        "status": "0.000–22.497 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 240,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "lookup0",
+        "title": "Lookup / mask · chunk 0",
+        "col": 2,
+        "row": 3,
+        "kind": "op",
+        "lines": [
+          "weight [20480,7168]",
+          "→ partial [512,7168]"
+        ],
+        "description": "GatherV2 / MaskedFill 及 mask 计算；没有 Cube GEMM。AI_CPU launcher 不计为普通计算交集。",
+        "source": "ops/vocab_parallel_embedding.py",
+        "records": [
+          {
+            "row": 27,
+            "type": "GreaterEqual",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.443,
+            "output": "512",
+            "start_us": 313.038
+          },
+          {
+            "row": 28,
+            "type": "Less",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.349,
+            "output": "512",
+            "start_us": 339.79
+          },
+          {
+            "row": 29,
+            "type": "LogicalAnd",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.384,
+            "output": "512",
+            "start_us": 359.321
+          },
+          {
+            "row": 30,
+            "type": "Cast",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.511,
+            "output": "512",
+            "start_us": 383.123
+          },
+          {
+            "row": 31,
+            "type": "Mul",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.94,
+            "output": "512",
+            "start_us": 393.538
+          },
+          {
+            "row": 32,
+            "type": "Cast",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.262,
+            "output": "512",
+            "start_us": 414.256
+          },
+          {
+            "row": 33,
+            "type": "Sub",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.798,
+            "output": "512",
+            "start_us": 424.121
+          },
+          {
+            "row": 34,
+            "type": "Cast",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.388,
+            "output": "512",
+            "start_us": 438.501
+          },
+          {
+            "row": 35,
+            "type": "Mul",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.824,
+            "output": "512",
+            "start_us": 444.799
+          },
+          {
+            "row": 36,
+            "type": "LogicalNot",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 2.293,
+            "output": "512",
+            "start_us": 459.937
+          },
+          {
+            "row": 37,
+            "type": "GatherV2",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 7.158,
+            "output": "512,7168",
+            "start_us": 483.256
+          },
+          {
+            "row": 38,
+            "type": "MaskedFill",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 10.906,
+            "output": "512,7168",
+            "start_us": 501.029
+          }
+        ],
+        "status": "313.038–511.935 μs · s59",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 540,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "rs0",
+        "title": "Vectors RS · chunk 0",
+        "col": 3,
+        "row": 4,
+        "kind": "comm",
+        "lines": [
+          "[512,7168] → [64,7168]",
+          "AicpuKernel 路径"
+        ],
+        "description": "本 capture 标记 hcom_reduceScatter_AicpuKernel，不能把所有 collective 都标成 CCU kernel。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 39,
+            "type": "hcom_reduceScatter_AicpuKernel",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 1286.211,
+            "output": "N/A",
+            "start_us": 987.992
+          }
+        ],
+        "status": "987.992–2274.203 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 690,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "ag1",
+        "title": "IDs AG · chunk 1",
+        "col": 3,
+        "row": 2,
+        "kind": "comm",
+        "lines": [
+          "[64] → [512] IDs",
+          "INT64 token IDs"
+        ],
+        "description": "先提交两块 IDs AG。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 26,
+            "type": "hcom_allGather_",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 13.259,
+            "output": "N/A",
+            "start_us": 197.192
+          }
+        ],
+        "status": "197.192–210.451 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 390,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "lookup1",
+        "title": "Lookup / mask · chunk 1",
+        "col": 2,
+        "row": 6,
+        "kind": "op",
+        "lines": [
+          "weight [20480,7168]",
+          "→ partial [512,7168]"
+        ],
+        "description": "GatherV2 / MaskedFill 及 mask 计算；没有 Cube GEMM。AI_CPU launcher 不计为普通计算交集。",
+        "source": "ops/vocab_parallel_embedding.py",
+        "records": [
+          {
+            "row": 41,
+            "type": "GreaterEqual",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.946,
+            "output": "512",
+            "start_us": 1124.33
+          },
+          {
+            "row": 42,
+            "type": "Less",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.605,
+            "output": "512",
+            "start_us": 1137.859
+          },
+          {
+            "row": 43,
+            "type": "LogicalAnd",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.318,
+            "output": "512",
+            "start_us": 1151.121
+          },
+          {
+            "row": 44,
+            "type": "Cast",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.56,
+            "output": "512",
+            "start_us": 1162.671
+          },
+          {
+            "row": 45,
+            "type": "Mul",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.94,
+            "output": "512",
+            "start_us": 1168.394
+          },
+          {
+            "row": 46,
+            "type": "Cast",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.522,
+            "output": "512",
+            "start_us": 1177.748
+          },
+          {
+            "row": 47,
+            "type": "Sub",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.502,
+            "output": "512",
+            "start_us": 1183.018
+          },
+          {
+            "row": 48,
+            "type": "Cast",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.698,
+            "output": "512",
+            "start_us": 1192.988
+          },
+          {
+            "row": 49,
+            "type": "Mul",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.519,
+            "output": "512",
+            "start_us": 1198.47
+          },
+          {
+            "row": 50,
+            "type": "LogicalNot",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 1.918,
+            "output": "512",
+            "start_us": 1209.026
+          },
+          {
+            "row": 51,
+            "type": "GatherV2",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 5.922,
+            "output": "512,7168",
+            "start_us": 1218.673
+          },
+          {
+            "row": 52,
+            "type": "MaskedFill",
+            "stream": "59",
+            "core": "AI_VECTOR_CORE",
+            "duration": 8.842,
+            "output": "512,7168",
+            "start_us": 1231.52
+          }
+        ],
+        "status": "1124.330–1240.362 μs · s59",
+        "engine": "AI_VECTOR_CORE",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 636,
+        "y": 990,
+        "w": 242,
+        "h": 106,
+        "stage": 2
+      },
+      {
+        "id": "rs1",
+        "title": "Vectors RS · chunk 1",
+        "col": 3,
+        "row": 7,
+        "kind": "comm",
+        "lines": [
+          "[512,7168] → [64,7168]",
+          "AicpuKernel 路径"
+        ],
+        "description": "本 capture 标记 hcom_reduceScatter_AicpuKernel，不能把所有 collective 都标成 CCU kernel。",
+        "source": "ops/finegrained_tp.py",
+        "records": [
+          {
+            "row": 53,
+            "type": "hcom_reduceScatter_AicpuKernel",
+            "stream": "N/A",
+            "core": "COMMUNICATION",
+            "duration": 888.961,
+            "output": "N/A",
+            "start_us": 2274.484
+          }
+        ],
+        "status": "2274.484–3163.445 μs · comm",
+        "engine": "COMMUNICATION",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "device",
+        "x": 936,
+        "y": 1140,
+        "w": 242,
+        "h": 106,
+        "stage": 3
+      },
+      {
+        "id": "join",
+        "title": "还原 owner rows / 裁有效行",
+        "col": 0,
+        "row": 9,
+        "kind": "op",
+        "lines": [
+          "[64,H] + [64,H] → pad [128,H]",
+          "后续裁回有效 token rows"
+        ],
+        "description": "设备上有 TensorMove；CSV 不能独自区分这些入口的 target/draft 调用者。",
+        "source": "ops/vocab_parallel_embedding.py",
+        "records": [],
+        "status": "源码依赖 / 数据归属",
+        "engine": "",
+        "sourceRevision": "3634a7eae94897d1a7b14d00807323e5af6b4a04",
+        "evidenceKind": "source",
+        "x": 36,
+        "y": 1440,
+        "w": 242,
+        "h": 106,
+        "stage": 0
+      }
+    ],
+    "edges": [
+      {
+        "id": "p0",
+        "src": "ag0",
+        "dst": "lookup0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 286
+          },
+          {
+            "x": 918,
+            "y": 286
+          },
+          {
+            "x": 918,
+            "y": 586
+          },
+          {
+            "x": 878,
+            "y": 586
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p1",
+        "src": "lookup0",
+        "dst": "rs0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 878,
+            "y": 600
+          },
+          {
+            "x": 918,
+            "y": 600
+          },
+          {
+            "x": 918,
+            "y": 736
+          },
+          {
+            "x": 936,
+            "y": 736
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p2",
+        "src": "in",
+        "dst": "ag0",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 136
+          },
+          {
+            "x": 914,
+            "y": 136
+          },
+          {
+            "x": 914,
+            "y": 300
+          },
+          {
+            "x": 936,
+            "y": 300
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p3",
+        "src": "ag1",
+        "dst": "lookup1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 436
+          },
+          {
+            "x": 896,
+            "y": 436
+          },
+          {
+            "x": 896,
+            "y": 1036
+          },
+          {
+            "x": 878,
+            "y": 1036
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p4",
+        "src": "lookup1",
+        "dst": "rs1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 878,
+            "y": 1050
+          },
+          {
+            "x": 918,
+            "y": 1050
+          },
+          {
+            "x": 918,
+            "y": 1186
+          },
+          {
+            "x": 936,
+            "y": 1186
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p5",
+        "src": "in",
+        "dst": "ag1",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 278,
+            "y": 150
+          },
+          {
+            "x": 296,
+            "y": 150
+          },
+          {
+            "x": 296,
+            "y": 450
+          },
+          {
+            "x": 936,
+            "y": 450
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p6",
+        "src": "rs0",
+        "dst": "join",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 750
+          },
+          {
+            "x": 296,
+            "y": 750
+          },
+          {
+            "x": 296,
+            "y": 1486
+          },
+          {
+            "x": 278,
+            "y": 1486
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p7",
+        "src": "rs1",
+        "dst": "join",
+        "label": "数据就绪",
+        "shape": "",
+        "order": false,
+        "description": "消费者必须等待生产者完成；首例时序来自同一层/调用，非跨样本拼接。",
+        "points": [
+          {
+            "x": 936,
+            "y": 1200
+          },
+          {
+            "x": 300,
+            "y": 1200
+          },
+          {
+            "x": 300,
+            "y": 1500
+          },
+          {
+            "x": 278,
+            "y": 1500
+          }
+        ],
+        "backedge": true
+      },
+      {
+        "id": "p8",
+        "src": "ag0",
+        "dst": "ag1",
+        "label": "通信次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 1057,
+            "y": 346
+          },
+          {
+            "x": 1057,
+            "y": 390
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p9",
+        "src": "lookup0",
+        "dst": "lookup1",
+        "label": "主流查表次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 757,
+            "y": 646
+          },
+          {
+            "x": 757,
+            "y": 990
+          }
+        ],
+        "backedge": false
+      },
+      {
+        "id": "p10",
+        "src": "rs0",
+        "dst": "rs1",
+        "label": "通信次序",
+        "shape": "",
+        "order": true,
+        "description": "同流/通信发起顺序或源码显式等待，不等同于张量数学依赖。",
+        "points": [
+          {
+            "x": 1057,
+            "y": 796
+          },
+          {
+            "x": 1057,
+            "y": 1140
+          }
+        ],
+        "backedge": false
+      }
+    ],
+    "parallelGroups": [
+      {
+        "id": "rs0:lookup1",
+        "color": "#71dac8",
+        "title": "交集中位 27.453 μs",
+        "parts": [
+          [
+            "rs0"
+          ],
+          [
+            "lookup1"
+          ]
+        ]
+      }
+    ],
+    "windows": [
+      [
+        "Embedding 双 chunk 执行顺序",
+        "20 个匹配的 512-row lookup 双 chunk 调用。这里按形状匹配，不冒充已由 CSV 分离 target/draft caller。"
+      ],
+      [
+        "入口 envelope 不能当带宽",
+        "首例 eager / AICPU RS 有较大提交与等待区间；只记录实际交集，不拿该通信 envelope 拟合链路带宽。"
+      ]
+    ],
+    "stages": [
+      {
+        "title": "输入 / 缓存（非引擎）",
+        "index": 0,
+        "x": 20,
+        "y": 18,
+        "w": 270,
+        "h": 1568
+      },
+      {
+        "title": "Cube / MIX_AIC",
+        "index": 1,
+        "x": 320,
+        "y": 18,
+        "w": 270,
+        "h": 1568
+      },
+      {
+        "title": "Vector / MIX_AIV",
+        "index": 2,
+        "x": 620,
+        "y": 18,
+        "w": 270,
+        "h": 1568
+      },
+      {
+        "title": "Communication",
+        "index": 3,
+        "x": 920,
+        "y": 18,
+        "w": 270,
+        "h": 1568
+      }
+    ],
+    "resourceLanes": true,
+    "observed": true,
+    "family": "embedding",
+    "width": 1200,
+    "height": 1604
+  }
+}

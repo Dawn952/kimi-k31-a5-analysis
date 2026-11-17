@@ -4,20 +4,22 @@ import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=name=>fs.readFileSync(path.join(root,'src',name),'utf8');
 const css=['style.css','localtp.css'].map(read).join('\n');
-const js=['dcp-overlap.js','diagram-layout.js','localtp-model.js','shared-tp-current.js','shell.js','localtp-view.js'].map(read).join('\n;\n').replaceAll('</script','<\\/script');
+const profile=JSON.parse(fs.readFileSync(path.join(root,'data/localtp-profile-20261113.json'),'utf8'));
+const js=('window.KimiA5LocalTPProfileData='+JSON.stringify(profile)+';\n'+['diagram-layout.js','localtp-model.js','localtp-profile.js','shared-tp-current.js','shell.js','localtp-view.js'].map(read).join('\n;\n')).replaceAll('</script','<\\/script');
 const html=`<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Kimi K3.1 A5 纯DP/localTP：显存权重、计算通信依赖、Cube/Vector/Communication 多流与DCP profiling对照。"><title>Kimi K3.1 · A5 localTP 分析</title>
 <style>${css}
 .public-wrap{max-width:1900px;margin:auto;padding:22px}body[data-page=localtp] main{padding:0;max-width:none}.public-nav{display:flex;align-items:center;gap:22px;flex-wrap:wrap;max-width:1856px;margin:0 auto 22px;padding-bottom:14px;border-bottom:1px solid #304957;font-size:12px}.public-nav b{margin-right:auto;color:#bddfe3}.public-evidence{margin:24px 0}.public-evidence p{font-size:12px;line-height:1.9;color:#a9c0cd}.public-evidence code{overflow-wrap:anywhere}@media(max-width:700px){.public-wrap{padding:14px}.public-nav{gap:12px}}
 </style></head><body data-page="localtp"><div class="public-wrap"><nav class="public-nav"><b>Kimi K3.1 / A5 · 2026-11-11</b><a href="memory.html">1M 显存计算器 · A3 / A5</a><a href="https://github.com/Dawn952/kimi-k31-a5-analysis/blob/main/design/README.md">软件设计 · 六类细粒度TP</a><a href="https://github.com/vllm-project/vllm-ascend/pull/21624">实现 PR21624 · Draft</a><a href="https://github.com/Dawn952/kimi-k31-a5-analysis">GitHub 图文与源码</a><a href="#source-evidence">来源 / G与O核对</a></nav><main id="main"><div id="view"></div></main>
 <section id="source-evidence" class="panel public-evidence"><h2>Gating G 与 O 权重核对</h2><p>本表为 attention 输出 <code>g_proj.weight</code>。A5 实际量化 checkpoint header 中 G 与 O 都是 BF16，每层各 88,080,384 参数、176,160,768 bytes = 168 MiB。维度顺序相反，权重数值独立。93层总量各15.2578125 GiB。</p><table class="data-table"><thead><tr><th>矩阵</th><th>完整 shape [out,in]</th><th>localTP8 shape</th><th>完整 / 每卡</th></tr></thead><tbody><tr><td>G</td><td>[12288,7168]</td><td>[1536,7168]</td><td>168 / 21 MiB</td></tr><tr><td>O</td><td>[7168,12288]</td><td>[7168,1536]</td><td>168 / 21 MiB</td></tr></tbody></table>
-<h2 style="margin-top:24px">来源与验收边界</h2><p>A5 分析源码版本 <code>30572def8290cf08b300a2326b09f9c4abe8f30f</code>，上游 vLLM <code>24420b7a341af37a9bc3186e6fc6062512e0aa58</code>。模块包括 <code>ops/kimi_kda.py</code>、<code>ops/kda.py</code>、<code>attention/sfa_v1.py</code>、<code>ops/vocab_parallel_embedding.py</code>。这里公开分析模型、图示和精简统计；运行环境源码和原始权重/trace 不在本仓库内。</p><p>DCP 样本采集日期2026-11-05，metadata确认TP8/DCP8/EP32；采集commit未确认。精简的真实kernel事件及区间统计公开在本仓库 <code>src/dcp-overlap.js</code>。通信envelope包含控制与等待，交集不等于端到端省时；不能据此拟合新拓扑带宽。实现已提交上游 Draft PR21624；950项相关单测、8项隔离编译检查及两卡执行器测试通过。完整DP32模型、峰值HBM与端到端性能仍待验收，图中窗口不代表实测加速。</p><p><a href="https://github.com/vllm-project/vllm-ascend/pull/20574/">GLM localTP参考PR</a> · <a href="https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0218.html">CANN kernel类型定义</a></p></section></div><script>${js}\nrenderLocalTP();</script></body></html>`;
-const currentKda=`<section class="panel public-evidence kda-current"><h2>2026-11-13 · 当前 A5 KDA 与三流修订</h2><p>固定实际部署版本3634a7eae948；DP32TP1/localTP8，C128、128k输入/1k输出、DSpark preview 3步/固定2.7。690个KDA层样本确认：QKV/beta合并返回后，17.45μs Vec仍在主流排队。下一步方案未实现、未做新NPU测试；框线只圈跨资源候选窗口，Vector阶段保留交接等待。</p><p><a href="https://github.com/Dawn952/kimi-k31-a5-analysis/blob/main/design/a5-kda-three-streams-20261113.md">完整依赖、通信代价、事件接线与验收</a></p><style>.kda-current svg{display:block;width:100%;height:auto;margin:20px 0}</style>${fs.readFileSync(path.join(root,'docs/images/a5-kda-current-20261113.svg'),'utf8')}${fs.readFileSync(path.join(root,'docs/images/a5-kda-three-streams-plan-20261113.svg'),'utf8')}</section><h2>下方保留早期设计交互模型；当前实测以上图及新报告为准</h2>`;
-const outputHtml=html.replace('实现 PR21624 · Draft','实现 PR21624 · Open')
-  .replace('上游 Draft PR21624','上游 PR21624（历史验证记录）')
-  .replace('<main id="main">','<p><a href="#shared-current">先看当前 Shared expert localTP · 976ea36e9</a></p>'+currentKda+'<main id="main">');
+<h2 style="margin-top:24px">来源与范围</h2><p>计算与通信依赖流采用 A5 localTP 实际 profiling 的固定部署版本3634a7eae948，节点链接指向该版本；最新 PR 源码学习版本976ea36e9单独标注。权重来自 checkpoint header / 加载后校准；payload 与带宽预算为参数估算。图中交集是单rank设备区间观察，不是端到端加速或完整硬件验收。</p></section></div><script>${js}\nrenderLocalTP();</script></body></html>`;
+const outputHtml=html.replace('实现 PR21624 · Draft','实现 PR21624')
+  .replace('<b>Kimi K3.1 / A5 · 2026-11-11</b>','<b>Kimi K3.1 / A5 · localTP</b>')
+  .replace('软件设计 · 六类细粒度TP','细粒度TP设计')
+  .replace('<a href="#source-evidence">来源 / G与O核对</a>','<a href="#lp-flow">计算与通信依赖流</a><a href="#source-evidence">G/O权重核对</a>');
 fs.writeFileSync(path.join(root,'docs/index.html'),outputHtml);
 fs.writeFileSync(path.join(root,'docs/images/shared-localtp-current-20261117.svg'),
   (await import('node:module')).createRequire(import.meta.url)('../src/shared-tp-current.js').svg);
 console.log('Built self-contained docs/index.html: '+Buffer.byteLength(outputHtml)+' bytes');
 await import('./build-memory.mjs');
+await import('./export-profile-diagrams.mjs');

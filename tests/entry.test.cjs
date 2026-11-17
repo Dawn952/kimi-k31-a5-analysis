@@ -7,10 +7,13 @@ test('standalone entry initializes and renders every family without external scr
   const document={body:{classList:{remove(){}}},querySelector:get,querySelectorAll:()=>[]};
   const ctx={document,setTimeout};ctx.window=ctx;vm.createContext(ctx);
   vm.runInContext(html.match(/<script>([\s\S]*)<\/script>/)[1],ctx);
-  for(const family of ['kda','dsa','embedding','head','dense'])for(const pipeline of [false,true]){
+  for(const family of ['kda','dsa','shared','embedding','head','dense'])for(const pipeline of [false,true]){
     vm.runInContext(`lp.family='${family}';lp.pipeline=${pipeline};renderLocalTP();`,ctx);
     assert.ok(get('#lp-canvas').innerHTML.includes('<svg'));
     assert.ok(!get('#lp-canvas').innerHTML.includes('NaN'));
     assert.ok(get('#lp-results').innerHTML.includes('每卡新增通信账本'));
+    assert.ok(get('#lp-results').innerHTML.includes('A5 localTP 实测'));
+    assert.ok(!get('#lp-results').innerHTML.includes('id="lp-pipeline"'));
+    assert.ok(!get('#lp-results').innerHTML.includes('KDA 新排法'));
   }
 });

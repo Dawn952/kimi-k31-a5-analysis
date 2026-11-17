@@ -13,3 +13,5 @@ body[data-page=localtp] .sidebar .side-bottom{display:none}
 .lp-dcp-proof{background:#11232f;border:1px solid #3d596c;padding:18px;border-radius:8px;margin:18px 0}.lp-dcp-proof h3{font-size:15px}.lp-dcp-proof .data-table{font-size:11px}.lp-dcp-proof details summary{font-size:12px;cursor:pointer;margin:13px 0}.lp-trace-scroll{overflow:auto;border:1px solid #2c475a;border-radius:5px;margin-top:12px}.lp-trace-svg{display:block;max-width:none;font-family:var(--mono)}
 
 .lp-chunk-cost{border-left:3px solid #d7b77c;background:#2a2b2d;padding:14px 18px;margin-top:15px}.lp-chunk-cost b{font-size:12px;color:#edcf9b}.lp-chunk-cost p,.lp-chunk-cost small{font-size:11px;color:#b9c4ca;line-height:1.85;display:block}.lp-chunk-cost strong{color:#f3dbaa}
+
+.lp-profile-proof{background:#11232f;border:1px solid #3d596c;padding:18px;border-radius:8px;margin:18px 0}.lp-profile-proof b{color:#d3e9ec}.lp-profile-proof p{font-size:12px;line-height:1.85;color:#aac3d1}.lp-profile-proof .data-table{font-size:12px}
