@@ -10,18 +10,18 @@ test('TP8 state and DCP8 history have independent split dimensions',()=>{
   assert.equal(r.rec.total,217489536);
   assert.equal(r.poolBytes,r.sharedBytes+r.privateBytes+r.stateContent+r.statePadding+r.holes+r.sidecars+r.bytesPerId);
 });
-test('explicit budget sharing, DSpark tail and null are counted once per engine',()=>{
-  const r=calc({kvGiB:21,requests:64});assert.equal(r.sharedIds,9);assert.equal(r.sharedTokens,110592);
+test('optional extra-block stress case and null are counted once per engine',()=>{
+  const r=calc({kvGiB:21,requests:64,dropTail:true});assert.equal(r.sharedIds,9);assert.equal(r.sharedTokens,110592);
   assert.equal(r.totalHistory,11);assert.equal(r.privateHistory,2);
   assert.equal(r.ids,9+64*(2+6)+1);assert.equal(r.poolIds,595);
   assert.equal(r.capacity,73);assert.equal(r.globalCapacity,292);
   assert.equal(r.globalAdmitted,256);
-  const next=calc({kvGiB:21,requests:65});assert.equal(next.poolBytes-r.poolBytes,8*r.bytesPerId);
-  assert.equal(calc({kvGiB:21,requests:73}).ids,594);assert.equal(calc({kvGiB:21,requests:74}).ids,602);
+  const next=calc({kvGiB:21,requests:65,dropTail:true});assert.equal(next.poolBytes-r.poolBytes,8*r.bytesPerId);
+  assert.equal(calc({kvGiB:21,requests:73,dropTail:true}).ids,594);assert.equal(calc({kvGiB:21,requests:74,dropTail:true}).ids,602);
 });
 test('sharing, replicated Indexer and unknown runtime stay explicit',()=>{
   const a=calc(),no=calc({shared:false}),rep=calc({indexerSharded:false});
-  assert.equal(no.ids,52*(11+6)+1);assert.ok(no.poolBytes>a.poolBytes);
+  assert.equal(no.ids,60*(11+6)+1);assert.ok(no.poolBytes>a.poolBytes);
   assert.equal(rep.indexRegion,8*a.indexRegion);assert.ok(rep.capacity<a.capacity);
   assert.equal(a.totalBytes,null);assert.equal(calc({runtimeGiB:0}).totalBytes,a.knownBytes);
   assert.equal(calc({dropTail:false}).sharedTokens,122880);
@@ -30,15 +30,23 @@ test('sharing, replicated Indexer and unknown runtime stay explicit',()=>{
 test('default budget comes from matched post-graph evidence, never the unrelated 21 GiB run',()=>{
   const e=require('../data/memory-dcp-evidence.json'),r=calc();
   assert.equal(r.available,16423116451);assert.equal(r.poolIds,433);
-  assert.equal(r.capacity,52);assert.equal(r.globalAdmitted,208);
+  assert.equal(r.p.dropTail,false);assert.equal(r.sharedIds,10);assert.equal(r.privateHistory,1);
+  assert.equal(r.capacity,60);assert.equal(r.globalAdmitted,240);
   assert.equal(r.p.weightsGiB,61.08-e.recordsInMeasuredLoadBytes/M.GiB);
   assert.equal(e.postGraphBudgetBytes,Math.min(...e.profiles.map(x=>x.fitRequestedBytes)));
   const groupCaps=e.profiles.map(x=>calc({kvGiB:x.fitRequestedBytes/M.GiB}).capacity);
-  assert.deepEqual(groupCaps,[53,53,52,52]);assert.equal(groupCaps.reduce((a,b)=>a+b,0),210);
+  assert.deepEqual(groupCaps,[60,60,60,60]);assert.equal(groupCaps.reduce((a,b)=>a+b,0),240);
   for(const x of e.profiles){
     assert.equal(Math.floor(x.allocatedPoolIdsInferred/17*x.modelLen),x.reportedCapacityTokens);
   }
-  assert.equal(calc({kvGiB:497*r.bytesPerId/M.GiB}).capacity,60);
+  assert.equal(calc({kvGiB:497*r.bytesPerId/M.GiB}).capacity,69);
+});
+test('warm DSpark hash hit, CoW tail and logical PD suffix agree',()=>{
+  const r=calc(),hash=1536,N=r.p.context;
+  const local=Math.floor((N-1)/hash)*hash;
+  assert.equal(local,130560);assert.equal(local%r.coverage,7680);
+  assert.equal(N-1-local,511);assert.equal(Math.floor(local/r.coverage),r.sharedIds);
+  assert.equal(r.totalHistory,11);assert.equal(r.privateHistory,1);
 });
 test('records follow max_num_seqs, capacity respects memory and scheduler limits',()=>{
   const a=calc(),b=calc({requests:1}),c=calc({maxSeqs:128});

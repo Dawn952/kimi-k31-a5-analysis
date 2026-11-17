@@ -14,7 +14,8 @@
     "bytes": 1097935874
   },
   "weightScope": "Checkpoint/source estimate; main from calibrated workbook A5_Decode_TP8DCP8; draft context_proj/MLP/q_b/kv_b/o divided by TP8, q_a/kv_a/norm/Markov replicated; shared target embedding/lm_head excluded. Loader and temporary repacking require measurement.",
-  "prefixScope": "Full logical-block sharing only; one shared prefix per DP engine. DSpark may drop a complete tail block. No assumption of fractional-page reuse or measured 100% token hits.",
+  "prefixScope": "DSpark needs_eagle_block_drop=false in inspected experiment container. Logged effective groups (12288,1536,1536,1536), no prefix_match_unit override: hash GCD=1536. Warm 131072-token prompt hits 130560 locally, pulls 511 logical tokens up to N-1, recomputes final token. Ten full blocks share IDs; partial tail needs per-request CoW. Per-DP seed retention and transient CoW overhead are not an observed block-ID trace.",
+  "prefixSource": {"inspectedDate":"2026-11-17","vllmGitHead":"4ba787ec9959e566d3b587a796dff07673324da5","ascendGitBase":"3f1de8b04de8feab92587439b24e2cbf67133720","scope":"Read working-tree files from stopped review_s1 experiment container; Git HEAD identifies base only, not all image-local modifications."},
   "capacityScope": "align specification upper bound (2 base state pages), not a throughput or steady-state occupancy measurement; scheduler max_num_seqs enforced separately.",
   "profiles": [
     {
