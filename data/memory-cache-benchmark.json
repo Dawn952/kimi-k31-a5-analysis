@@ -1,0 +1,312 @@
+{
+  "date": "2026-11-17",
+  "hardware": "Ascend950DT_9582",
+  "torch": "2.10.0+cpu",
+  "torchNpu": "2.10.0.post7",
+  "scope": "Operation microbenchmarks with existing model services resident; not isolated full-model TTFT/TPOT or a 32-rank experiment.",
+  "cowMethod": "Archived actual Ascend CoW function, synthetic paired tensors; 65 physical IDs, 1536 tokens/physical page. Same cached source copied to distinct destination IDs. Per batch 10 warmups and 100 samples. CPU submission overlaps the NPU event interval; neither is additive with wall time.",
+  "transferMethod": "Synthetic KV buffers transferred with real Mooncake AscendDirectTransport/ADXL batch_transfer_sync_read on two hosts, QoS=1 matching connector default. 10 warmups and 100 samples per case. Segmented cases have 64 KiB gaps; payload bytes verified after first and last transfer. One source session, not original P TP8/PP4 fan-in.",
+  "ttftMethod": "No client TTFT, scheduler remote-wait trace, or critical-path exposed delay was measured. CoW and transfer wall durations cannot be summed into TTFT. Concurrent work on other requests alone does not prove hiding for the measured request.",
+  "payloadPerCowIdBytes": 37896192,
+  "kdaStateBytes": 58079232,
+  "cow": [
+    {
+      "node": "A",
+      "batch": 1,
+      "cpuSubmitMs": {
+        "mean": 3.8129025999999997,
+        "p50": 3.577355,
+        "p95": 4.7325335,
+        "p99": 8.344705300000001
+      },
+      "deviceEventSpanMs": {
+        "mean": 3.8413373970985414,
+        "p50": 3.590757966041565,
+        "p95": 4.79609067440033,
+        "p99": 8.409320306777962
+      },
+      "wallMs": {
+        "mean": 4.2434289000000005,
+        "p50": 4.044465,
+        "p95": 5.145010999999999,
+        "p99": 8.794330400000007
+      }
+    },
+    {
+      "node": "A",
+      "batch": 8,
+      "cpuSubmitMs": {
+        "mean": 11.1909173,
+        "p50": 11.040025,
+        "p95": 12.822104499999998,
+        "p99": 13.243502200000002
+      },
+      "deviceEventSpanMs": {
+        "mean": 11.14030782699585,
+        "p50": 11.058125972747803,
+        "p95": 12.810356521606446,
+        "p99": 13.270054025650024
+      },
+      "wallMs": {
+        "mean": 11.6578135,
+        "p50": 11.47345,
+        "p95": 13.284939999999999,
+        "p99": 13.579494
+      }
+    },
+    {
+      "node": "A",
+      "batch": 32,
+      "cpuSubmitMs": {
+        "mean": 39.496157600000004,
+        "p50": 37.180144999999996,
+        "p95": 45.7874485,
+        "p99": 46.57542700000001
+      },
+      "deviceEventSpanMs": {
+        "mean": 39.429967651367186,
+        "p50": 37.01529502868652,
+        "p95": 45.81893672943115,
+        "p99": 46.46424194335939
+      },
+      "wallMs": {
+        "mean": 40.0702906,
+        "p50": 37.720535,
+        "p95": 46.313813,
+        "p99": 47.020098100000006
+      }
+    },
+    {
+      "node": "A",
+      "batch": 64,
+      "cpuSubmitMs": {
+        "mean": 75.62987919999999,
+        "p50": 74.70684,
+        "p95": 87.4106495,
+        "p99": 88.8421557
+      },
+      "deviceEventSpanMs": {
+        "mean": 75.56662761688233,
+        "p50": 74.67679595947266,
+        "p95": 87.30438995361328,
+        "p99": 88.86000747680664
+      },
+      "wallMs": {
+        "mean": 76.6094448,
+        "p50": 75.37791999999999,
+        "p95": 88.2035235,
+        "p99": 89.79518740000002
+      }
+    },
+    {
+      "node": "B",
+      "batch": 1,
+      "cpuSubmitMs": {
+        "mean": 3.2833328,
+        "p50": 3.193295,
+        "p95": 3.7834455,
+        "p99": 3.939005400000005
+      },
+      "deviceEventSpanMs": {
+        "mean": 3.277927851676941,
+        "p50": 3.272860527038574,
+        "p95": 3.7951311230659486,
+        "p99": 3.968164703845979
+      },
+      "wallMs": {
+        "mean": 3.6899284999999997,
+        "p50": 3.676,
+        "p95": 4.1872865,
+        "p99": 4.349198300000006
+      }
+    },
+    {
+      "node": "B",
+      "batch": 8,
+      "cpuSubmitMs": {
+        "mean": 11.1315904,
+        "p50": 11.127715,
+        "p95": 13.2513015,
+        "p99": 13.357871300000003
+      },
+      "deviceEventSpanMs": {
+        "mean": 11.08886812210083,
+        "p50": 10.981302261352539,
+        "p95": 13.269665431976318,
+        "p99": 13.387684783935548
+      },
+      "wallMs": {
+        "mean": 11.5459161,
+        "p50": 11.6705,
+        "p95": 13.673835500000001,
+        "p99": 13.9108622
+      }
+    },
+    {
+      "node": "B",
+      "batch": 32,
+      "cpuSubmitMs": {
+        "mean": 44.2548125,
+        "p50": 44.527965,
+        "p95": 45.450373,
+        "p99": 46.7620224
+      },
+      "deviceEventSpanMs": {
+        "mean": 44.157331733703614,
+        "p50": 44.387264251708984,
+        "p95": 45.45521259307861,
+        "p99": 46.55877922058106
+      },
+      "wallMs": {
+        "mean": 44.7364319,
+        "p50": 44.97946,
+        "p95": 46.209648,
+        "p99": 47.3040574
+      }
+    },
+    {
+      "node": "B",
+      "batch": 64,
+      "cpuSubmitMs": {
+        "mean": 83.4843629,
+        "p50": 85.485375,
+        "p95": 87.5764925,
+        "p99": 87.8113155
+      },
+      "deviceEventSpanMs": {
+        "mean": 83.4381290435791,
+        "p50": 85.51191329956055,
+        "p95": 87.53885116577149,
+        "p99": 87.84523811340333
+      },
+      "wallMs": {
+        "mean": 83.9730252,
+        "p50": 85.960865,
+        "p95": 88.0382845,
+        "p99": 88.2959711
+      }
+    }
+  ],
+  "transfer": [
+    {
+      "direction": "A→B",
+      "name": "KDA_contiguous",
+      "bytes": 58079232,
+      "segments": 1,
+      "gapBytes": 0,
+      "firstCallMs": 105.44967,
+      "warmMs": {
+        "mean": 0.6574113,
+        "p50": 0.645605,
+        "p95": 1.0388069999999998,
+        "p99": 1.4701409000000007
+      },
+      "payloadGBpsAtP50": 89.96093896422735
+    },
+    {
+      "direction": "A→B",
+      "name": "KDA_69_layer_segments",
+      "bytes": 58079232,
+      "segments": 138,
+      "gapBytes": 65536,
+      "firstCallMs": 1.09402,
+      "warmMs": {
+        "mean": 1.0581264,
+        "p50": 0.9831,
+        "p95": 1.443192,
+        "p99": 1.6748698000000015
+      },
+      "payloadGBpsAtP50": 59.07764418675618
+    },
+    {
+      "direction": "A→B",
+      "name": "attention_one_physical_ID",
+      "bytes": 37896192,
+      "segments": 77,
+      "gapBytes": 65536,
+      "firstCallMs": 1.93364,
+      "warmMs": {
+        "mean": 0.8644273,
+        "p50": 0.707705,
+        "p95": 1.4441605000000002,
+        "p99": 1.6838137000000044
+      },
+      "payloadGBpsAtP50": 53.54800658466451
+    },
+    {
+      "direction": "A→B",
+      "name": "KDA_and_one_attention_ID",
+      "bytes": 95975424,
+      "segments": 215,
+      "gapBytes": 65536,
+      "firstCallMs": 1.51985,
+      "warmMs": {
+        "mean": 1.3797552,
+        "p50": 1.30721,
+        "p95": 1.9546325,
+        "p99": 2.1319750000000006
+      },
+      "payloadGBpsAtP50": 73.42005033621223
+    },
+    {
+      "direction": "B→A",
+      "name": "KDA_contiguous",
+      "bytes": 58079232,
+      "segments": 1,
+      "gapBytes": 0,
+      "firstCallMs": 129.97055,
+      "warmMs": {
+        "mean": 0.8550995,
+        "p50": 0.83844,
+        "p95": 1.188723,
+        "p99": 1.2719818
+      },
+      "payloadGBpsAtP50": 69.27058823529411
+    },
+    {
+      "direction": "B→A",
+      "name": "KDA_69_layer_segments",
+      "bytes": 58079232,
+      "segments": 138,
+      "gapBytes": 65536,
+      "firstCallMs": 1.42425,
+      "warmMs": {
+        "mean": 1.0981513,
+        "p50": 1.13235,
+        "p95": 1.393862,
+        "p99": 2.8009152000000044
+      },
+      "payloadGBpsAtP50": 51.29088356073652
+    },
+    {
+      "direction": "B→A",
+      "name": "attention_one_physical_ID",
+      "bytes": 37896192,
+      "segments": 77,
+      "gapBytes": 65536,
+      "firstCallMs": 1.09254,
+      "warmMs": {
+        "mean": 0.8143758,
+        "p50": 0.6639550000000001,
+        "p95": 1.1827535,
+        "p99": 1.2966428
+      },
+      "payloadGBpsAtP50": 57.07644644591877
+    },
+    {
+      "direction": "B→A",
+      "name": "KDA_and_one_attention_ID",
+      "bytes": 95975424,
+      "segments": 215,
+      "gapBytes": 65536,
+      "firstCallMs": 1.52974,
+      "warmMs": {
+        "mean": 1.1703359999999998,
+        "p50": 1.176685,
+        "p95": 1.4837589999999998,
+        "p99": 1.6327498
+      },
+      "payloadGBpsAtP50": 81.5642453162911
+    }
+  ]
+}

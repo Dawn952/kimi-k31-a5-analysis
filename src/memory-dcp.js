@@ -60,6 +60,25 @@
   const g=x=>(x/GiB).toFixed(6),b=x=>Math.round(x).toLocaleString('en-US');
   const tr=(label,bytes,explain)=>`<tr><td>${label}</td><td class="num">${g(bytes)}</td><td>${explain}</td></tr>`;
   const table=(headers,rows)=>`<div class="mem-table-wrap"><table class="mem-table"><thead><tr>${headers.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+  function benchmarkView(){
+    const B=root.KIMI_CACHE_BENCHMARK;if(!B)return '';
+    const ms=x=>x.toFixed(3),names={KDA_contiguous:'KDA连续缓冲对照',KDA_69_layer_segments:'69层KDA state',attention_one_physical_ID:'完整F物理页对照',KDA_and_one_attention_ID:'KDA + 完整F页对照'};
+    return `<h3 id="mem-cache-timing">CoW与P→D实测：操作耗时不等于TTFT增量</h3>
+    <div class="mem-note"><b>2026-11-17 · Ascend950DT · 实测微基准。</b>沿用实验环境torch 2.10.0/torch_npu 2.10.0.post7。CoW直接执行归档函数并构造paired张量；65个ID，占用约2.294 GiB，每次尾页复制${b(B.payloadPerCowIdBytes)} B/卡。两测点、4档各100次。原服务仍驻留，测试前观测NPU利用率0%，未独占整机；数据逐区域验证。此处没有测32卡服务TTFT、TPOT或有效未掩盖等待。</div>
+    ${table(['测点','同批新请求','CPU提交p50 ms','NPU事件区间p50 ms','完成wall p50 ms','完成wall p95 ms'],B.cow.map(x=>`<tr><td>${x.node}</td><td>${x.batch}</td><td>${ms(x.cpuSubmitMs.p50)}</td><td>${ms(x.deviceEventSpanMs.p50)}</td><td>${ms(x.wallMs.p50)}</td><td>${ms(x.wallMs.p95)}</td></tr>`))}
+    <p>CPU提交和NPU执行相互重叠，<b>不能把CPU列与NPU列相加</b>。NPU事件区间包含主机提交间隙，不代表设备kernel一直忙。wall覆盖本次整批复制及完成同步；64请求一批的wall不能除以64作为每条请求等待时间。77个独立缓存平面逐一stack、再逐目的页copy_，所以0.152 ms的纯HBM带宽估算不能代表当前实现实测延迟。</p>
+    ${table(['方向','内容','payload MiB','段数','warm p50 ms','warm p95 ms'],B.transfer.map(x=>`<tr><td>${x.direction}</td><td>${names[x.name]}</td><td>${(x.bytes/2**20).toFixed(3)}</td><td>${x.segments}</td><td>${ms(x.warmMs.p50)}</td><td>${ms(x.warmMs.p95)}</td></tr>`))}
+    <p>使用合成KV缓冲调用真实Mooncake <code>batch_transfer_sync_read</code>，AscendDirectTransport/ADXL，QoS=1；两个方向、4布局各预热10次再测100次。138段KDA含69层conv及recurrent，合计${b(B.kdaStateBytes)} B/卡；分段之间留64 KiB间隔，避免相邻片段直接合并。每个布局首尾校验内容。首笔连接调用分别为 ${B.transfer.filter(x=>x.name==='KDA_contiguous').map(x=>x.direction+' '+ms(x.firstCallMs)+' ms').join('；')}，<b>不能与已建链warm样本混用</b>。单P源会话的微基准未复现P TP8/PP4的多源汇聚、接收队列和布局整理。“完整F页”是整页传输对照，<b>不是声称511-token逻辑缺口实际传了整页</b>；本页尚未采集该真实请求的length_list。</p>
+    <h4>哪些耗时能被掩盖</h4>
+    ${table(['关系','当前证据与TTFT归因'],[
+      '<tr><td>CoW的CPU提交 / NPU复制</td><td>提交与执行交错，wall已包含二者，不能重复计时。</td></tr>',
+      '<tr><td>P→D接收 / 其他请求decode</td><td>接收在后台线程异步执行，可以重叠；但仅观察到其他请求在算，不能证明本请求没有增加TTFT。</td></tr>',
+      '<tr><td>P→D接收 / 本请求首次forward</td><td>必须等KV就绪；未就绪的尾部等待和错过的调度轮次可能延迟首token。传输ms不能直接等同TTFT增量。</td></tr>',
+      '<tr><td>CoW / P→D接收</td><td>worker先提交CoW，随后启动加载；是否存在设备层重叠尚无对应服务trace，不能默认完全串行或完全掩盖。</td></tr>',
+      '<tr><td>P prefill / 同请求D接收</td><td>当前bulk路径的代理等待P响应再派发D；不能套用layerwise传输与同请求prefill重叠的假设。</td></tr>'
+    ])}
+    <p><b>本页不输出“CoW + 传输 = TTFT增量”。</b>要算未掩盖部分，需关联同一请求的D接纳、CoW完成、远端KV完成、调度可进入批次、首次forward及客户端首token时间；同时记录其他批次。只有完整时序或受控对照才能区分资源等待、依赖等待和调度量化，现有微基准不能完成这个归因。</p>`;
+  }
   function draw(){
     const r=calculate(p),single=calculate({...p,context:1048576,output:0,requests:1,shared:false});
     const off=calculate({...p,recover:false}),on=calculate({...p,recover:true}),recordPlan=on.rec;
@@ -91,6 +110,7 @@ KDA ID/请求 = 3组 × (2个align基础页 + ${p.recover?0:p.spec}个投机stat
 总池ID = ${r.sharedIds} 共享 + ${p.requests} 请求 × (${r.privateHistory} 私有历史 + ${r.stateIdsPerRequest} KDA) + 1 null = ${r.ids}
 净KV池ID = floor(${b(r.available)} B可用 / ${b(r.bytesPerId)} B每ID) = ${r.poolIds}
 并发容量/engine = floor((${r.poolIds} − ${r.sharedIds} 共享 − 1 null) / ${r.idsPerRequest} ID每请求) = ${r.capacity}</div>
+    ${benchmarkView()}
     <h3>完整物理池逐项对账</h3>${table(['分项','GiB/卡','计算式与含义'],[
       tr('共享历史ID全部区域',r.sharedBytes,`${r.sharedIds} ID × ${b(r.bytesPerId)} B/ID；每engine只计一次`),
       tr('私有历史ID全部区域',r.privateBytes,`${p.requests} 请求 × ${r.privateHistory} ID/请求 × ${b(r.bytesPerId)} B/ID；含尾块空位`),
